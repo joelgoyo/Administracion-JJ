@@ -5,7 +5,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 // Importar los componentes para las rutas
 import ExampleComponent from './components/ExampleComponent.vue';
 import NavComponent from './components/NavComponent.vue';
-
+import BillingComponent from './components/BillingComponent.vue';
 // Definir las rutas
 const routes = [
     { path: '/', component: ExampleComponent },
@@ -22,6 +22,7 @@ const router = createRouter({
 const app = createApp({});
 app.component('example-component', ExampleComponent);
 app.component('nav-component', NavComponent);
+app.component('billing-component', BillingComponent);
 
 // Usar el enrutador en la aplicación Vue
 app.use(router);
