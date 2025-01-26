@@ -26,6 +26,11 @@
             <a class="nav-link" href="/link">Link</a>
           </li>
         </ul>
+        <ul class="navbar-nav ml-auto mt-2 mt-md-0">
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Cerrar sesión</a>
+          </li>
+        </ul>
       </div>
     </nav>
   </div>
