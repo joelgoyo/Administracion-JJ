@@ -30,8 +30,6 @@
             <router-view></router-view>
         </div>
     </div>
-
-    @vite(['resources/js/app.js', 'resources/sass/app.scss'])
 </body>
 
 </html>
