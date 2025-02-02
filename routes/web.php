@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,3 +32,5 @@ Route::group(["middleware" => "auth"], function () {
         return redirect()->route('login');
     });
 });
+
+Route::get('/home', [HomeController::class, 'index']);
