@@ -1,9 +1,7 @@
 <!-- nav component vue -->
 <template>
-    <NavComponent></NavComponent>
+  <h1>facturacion</h1>
 </template>
   
   <script>
-  import NavComponent from './NavComponent.vue';
-
   </script>

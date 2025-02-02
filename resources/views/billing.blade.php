@@ -24,7 +24,7 @@
     <div id="app">
 
         <div class="container mt-4">
-            <billing-component></billing-component>
+           hola
         </div>
     </div>
 

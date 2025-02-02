@@ -1,15 +1,25 @@
 import './bootstrap';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
+// Importar solo componentes
+import MenuComponent from './components/MenuComponent.vue';
 
 // Importar los componentes para las rutas
-import ExampleComponent from './components/ExampleComponent.vue';
-import NavComponent from './components/NavComponent.vue';
-import BillingComponent from './components/BillingComponent.vue';
+import HomeComponent from './components/HomeComponent.vue';
+import BillingComponent from './components/BillingComponent.vue'; 
+import SupplierRegistrationComponent from './components/SupplierRegistrationComponent.vue'; 
+import InventoryComponent  from './components/InventoryComponent.vue';
+import CustomerRegistrationComponent from './components/CustomerRegistrationComponent.vue'; 
+import AccountingComponent from './components/AccountingComponent.vue';
+
 // Definir las rutas
 const routes = [
-    { path: '/', component: ExampleComponent },
-    { path: '/nav', component: NavComponent }
+    { path: '/', component: HomeComponent},
+    { path: '/billing', component: BillingComponent},
+    { path: '/supplier-registration', component: SupplierRegistrationComponent},
+    { path: '/inventory', component: InventoryComponent},
+    { path: '/customer-registration', component: CustomerRegistrationComponent},
+    { path: '/accounting', component: AccountingComponent},
 ];
 
 // Crear la instancia del enrutador
@@ -20,9 +30,14 @@ const router = createRouter({
 
 // Crear la aplicación Vue y registrar los componentes globalmente
 const app = createApp({});
-app.component('example-component', ExampleComponent);
-app.component('nav-component', NavComponent);
+app.component('home-component', HomeComponent);
+app.component('menu-component', MenuComponent);
 app.component('billing-component', BillingComponent);
+app.component('supplier-registration-component', SupplierRegistrationComponent);
+app.component('inventory-component', InventoryComponent);
+app.component('customer-registration-component', CustomerRegistrationComponent);
+app.component('accounting-component', AccountingComponent);
+
 
 // Usar el enrutador en la aplicación Vue
 app.use(router);
