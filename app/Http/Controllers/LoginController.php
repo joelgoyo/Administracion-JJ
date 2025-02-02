@@ -16,7 +16,7 @@ class LoginController extends Controller
         }
 
        return back()->with([
-           'data' => 'The provided credentials do not match our records.',
+           'data' => 'Estas credenciales son incorrectas',
        ]);
     }
 }
