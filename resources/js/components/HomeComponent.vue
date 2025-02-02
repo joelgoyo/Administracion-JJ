@@ -1,6 +1,12 @@
 <template>
-  <h1>facturacion</h1>
+      <h1>home</h1>
 </template>
   
   <script>
+
   </script>
+
+ <style>
+  
+ </style>
+  
