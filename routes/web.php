@@ -27,9 +27,34 @@ Route::group(["middleware" => "auth"], function () {
     });
     Route::get('/logout', function () {
         auth()->logout();
-
+        
         return redirect()->route('login');
     });
+    Route::get('/billing', function () {
+        return view('welcome');
+    });
+    Route::get('/supplier-registration', function () {
+        return view('welcome');
+    });
+    Route::get('/customer-registration', function () {
+        return view('welcome');
+    });
+    Route::get('/accounting', function () {
+        return view('welcome');
+    });
+    Route::get('/add-products', function () {
+        return view('welcome');
+    });
+    Route::get('/edit-products', function () {
+        return view('welcome');
+    });
+    Route::get('/income', function () {
+        return view('welcome');
+    });
+    Route::get('/expenses', function () {
+        return view('welcome');
+    });
 });
+
 
 Route::get('/home', [HomeController::class, 'index']);
