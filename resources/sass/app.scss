@@ -1,11 +1,7 @@
 // Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
+@use 'components/styles.scss';
 
-// Variables
-@import 'variables';
-
-// Bootstrap
-@import 'bootstrap/scss/bootstrap';
  :root{
     font-family: 'Reboto';
+    box-sizing: border-box;
  } 

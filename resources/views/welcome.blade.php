@@ -24,9 +24,7 @@
 <body>
     <div id="app">
         <menu-component></menu-component>
-        <div class="container">
-            <router-view></router-view>
-        </div>
+        <router-view></router-view>
     </div>
     @vite(['resources/js/app.js', 'resources/sass/app.scss'])
 </body>
@@ -37,5 +35,12 @@
         display: flex;
         flex-direction: row;
         align-items: flex-start;
+        width: 100%;
+    }
+    @media screen and (max-width: 905px) {   
+        #app {
+        flex-direction: column;
+    }
     }
 </style>
+ 

@@ -16,169 +16,170 @@
             rel="stylesheet"
         />
     </head>
-    <div :class="`${colapse ? '' : 'colapse-user'}`">
-        <div class="menu-side">
-            <div>
-                <div class="user">
+    <!-- NAVBAR MOVILES -->
+    <div class="navbar-movil d-flex justify-content-end">
+        <i class="icon-menu fa-solid fa-bars" @click="colapseNav"></i>
+    </div>
+
+    <div class="menu-side" :class="`${colapse ? '' : 'view-menu'}`">
+        <div>
+            <div class="user">
+                <div class="d-flex align-items-center">
                     <img
                         src="../../../public/img/photoUser.svg"
                         alt="Foto de usuario"
                     />
                     <div class="content-user">
-                        <h3>Administracion</h3>
-                        <p>lunes, Enero 20, 2025</p>
+                        <h3>Administrador</h3>
+                        <p>{{ fechaFormateada }}</p>
                     </div>
-                    <i
-                        class="icon-closet-open fa-solid"
-                        :class="`${
-                            colapse ? 'fa-arrow-left' : 'fa-arrow-right'
-                        }`"
-                        @click="colapseNav"
-                    ></i>
                 </div>
-                <h4 class="text-menu">Menu Principal</h4>
-
-                <nav class="opcion-menu">
-                    <div class="list-menu">
-                        <router-link to="/" class="link">
-                            <div class="menu-item d-flex align-items-center">
-                                <i class="icon-text fa-solid fa-house"></i>
-                                <div class="text">Home</div>
-                            </div>
-                        </router-link>
-                        <router-link to="/billing" class="link">
-                            <div class="menu-item d-flex align-items-center">
-                                <i
-                                    class="icon-text fa-solid fa-money-bills"
-                                ></i>
-                                <div class="text">Facturacion</div>
-                            </div>
-                        </router-link>
-                        <div class="link" @click="arrowToggleTwo">
-                            <div
-                                class="menu-item d-flex justify-content-between align-items-center"
-                            >
-                                <div class="d-flex align-items-center">
-                                    <i class="icon-text fa-solid fa-box"></i>
-                                    <div class="text">Inventario</div>
-                                </div>
-                                <i
-                                    class="arrow fa-solid"
-                                    :class="`${
-                                        changeTwo
-                                            ? 'fa-angle-down '
-                                            : 'fa-angle-up'
-                                    }`"
-                                ></i>
-                            </div>
-
-                            <div
-                                class="ul"
-                                :class="`${changeTwo ? 'delete' : 'view'}`"
-                            >
-                                <router-link to="/add-products" class="link">
-                                    <div
-                                        class="menu-item d-flex justify-content-between align-items-center"
-                                    >
-                                        <div class="d-flex align-items-center">
-                                            <i
-                                                class="icon-text fa-solid fa-circle-plus"
-                                            ></i>
-                                            <div class="text">
-                                                Agregar productos
-                                            </div>
-                                        </div>
-                                    </div>
-                                </router-link>
-                                <router-link to="/edit-products" class="link">
-                                    <div
-                                        class="menu-item d-flex justify-content-between align-items-center"
-                                    >
-                                        <div class="d-flex align-items-center">
-                                            <i
-                                                class="icon-text fa-solid fa-pen-to-square"
-                                            ></i>
-                                            <div class="text">
-                                                Editar o eliminar productos
-                                            </div>
-                                        </div>
-                                    </div>
-                                </router-link>
-                            </div>
-                        </div>
-                        <router-link to="/customer-registration" class="link">
-                            <div class="menu-item d-flex align-items-center">
-                                <i class="icon-text fa-solid fa-users"></i>
-                                <div class="text">Registro de cliente</div>
-                            </div>
-                        </router-link>
-                        <router-link to="/supplier-registration" class="link">
-                            <div class="menu-item d-flex align-items-center">
-                                <i class="icon-text fa-solid fa-user"></i>
-                                <div class="text">Registro de provedores</div>
-                            </div>
-                        </router-link>
-                        <div class="link" @click="arrowToggle">
-                            <div
-                                class="menu-item d-flex justify-content-between align-items-center"
-                            >
-                                <div class="d-flex align-items-center">
-                                    <i
-                                        class="icon-text fa-solid fa-hand-holding-dollar"
-                                    ></i>
-                                    <div class="text">Contabilidad</div>
-                                </div>
-                                <i
-                                    class="arrow fa-solid"
-                                    :class="`${
-                                        change
-                                            ? 'fa-angle-down '
-                                            : 'fa-angle-up'
-                                    }`"
-                                ></i>
-                            </div>
-                            <div
-                                class="ul"
-                                :class="`${change ? 'delete' : 'view'}`"
-                            >
-                                <router-link to="/income" class="link">
-                                    <div
-                                        class="menu-item d-flex justify-content-between align-items-center"
-                                    >
-                                        <div class="d-flex align-items-center">
-                                            <i
-                                                class="icon-text fa-solid fa-circle-plus"
-                                            ></i>
-                                            <div class="text">Ingresos</div>
-                                        </div>
-                                    </div>
-                                </router-link>
-                                <router-link to="/expenses" class="link">
-                                    <div
-                                        class="menu-item d-flex justify-content-between align-items-center"
-                                    >
-                                        <div class="d-flex align-items-center">
-                                            <i
-                                                class="icon-text fa-solid fa-circle-minus"
-                                            ></i>
-                                            <div class="text">Egresos</div>
-                                        </div>
-                                    </div>
-                                </router-link>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
+                <i
+                    class="icon-closet-open fa-solid"
+                    :class="`${colapse ? 'fa-arrow-left' : 'fa-arrow-right'}`"
+                    @click="colapseNav"
+                ></i>
             </div>
+            <h4 class="text-menu">Menu Principal</h4>
 
-            <a href="/logout">
-                <div class="btn-logout d-flex align-items-center">
-                    <i class="fa-solid fa-circle-xmark"></i>
-                    <div class="text">Cerrar sesion</div>
+            <nav class="opcion-menu">
+                <div class="list-menu">
+                    <router-link to="/" class="link">
+                        <div class="menu-item d-flex align-items-center">
+                            <i class="icon-text fa-solid fa-house"></i>
+                            <div class="text">Home</div>
+                        </div>
+                    </router-link>
+                    <router-link to="/billing" class="link">
+                        <div class="menu-item d-flex align-items-center">
+                            <i class="icon-text fa-solid fa-money-bills"></i>
+                            <div class="text">Facturacion</div>
+                        </div>
+                    </router-link>
+                    <div class="link" @click="arrowToggleTwo">
+                        <div
+                            class="menu-item d-flex justify-content-between align-items-center"
+                        >
+                            <div class="d-flex align-items-center">
+                                <i class="icon-text fa-solid fa-box"></i>
+                                <div class="text">Inventario</div>
+                            </div>
+                            <i
+                                class="arrow fa-solid"
+                                :class="`${
+                                    changeTwo ? 'fa-angle-down ' : 'fa-angle-up'
+                                }`"
+                            ></i>
+                        </div>
+
+                        <div
+                            class="ul"
+                            :class="`${changeTwo ? 'delete' : 'view'}`"
+                        >
+                            <router-link to="/add-products" class="link">
+                                <div
+                                    class="menu-item d-flex justify-content-between align-items-center"
+                                >
+                                    <div class="d-flex align-items-center">
+                                        <i
+                                            class="icon-text fa-solid fa-circle-plus"
+                                        ></i>
+                                        <div class="text">
+                                            Agregar productos
+                                        </div>
+                                    </div>
+                                </div>
+                            </router-link>
+                            <router-link to="/edit-products" class="link">
+                                <div
+                                    class="menu-item d-flex justify-content-between align-items-center"
+                                >
+                                    <div class="d-flex align-items-center">
+                                        <i
+                                            class="icon-text fa-solid fa-pen-to-square"
+                                        ></i>
+                                        <div class="text">
+                                            Editar o eliminar productos
+                                        </div>
+                                    </div>
+                                </div>
+                            </router-link>
+                        </div>
+                    </div>
+                    <router-link to="/customer-registration" class="link">
+                        <div class="menu-item d-flex align-items-center">
+                            <i class="icon-text fa-solid fa-users"></i>
+                            <div class="text">Registro de cliente</div>
+                        </div>
+                    </router-link>
+                    <router-link to="/supplier-registration" class="link">
+                        <div class="menu-item d-flex align-items-center">
+                            <i class="icon-text fa-solid fa-user"></i>
+                            <div class="text">Registro de provedores</div>
+                        </div>
+                    </router-link>
+                    <div class="link" @click="arrowToggle">
+                        <div
+                            class="menu-item d-flex justify-content-between align-items-center"
+                        >
+                            <div class="d-flex align-items-center">
+                                <i
+                                    class="icon-text fa-solid fa-hand-holding-dollar"
+                                ></i>
+                                <div class="text">Contabilidad</div>
+                            </div>
+                            <i
+                                class="arrow fa-solid"
+                                :class="`${
+                                    change ? 'fa-angle-down ' : 'fa-angle-up'
+                                }`"
+                            ></i>
+                        </div>
+                        <div
+                            class="ul"
+                            :class="`${change ? 'delete' : 'view'}`"
+                        >
+                            <router-link to="/income" class="link">
+                                <div
+                                    class="menu-item d-flex justify-content-between align-items-center"
+                                >
+                                    <div class="d-flex align-items-center">
+                                        <i
+                                            class="icon-text fa-solid fa-circle-plus"
+                                        ></i>
+                                        <div class="text">Ingresos</div>
+                                    </div>
+                                </div>
+                            </router-link>
+                            <router-link to="/expenses" class="link">
+                                <div
+                                    class="menu-item d-flex justify-content-between align-items-center"
+                                >
+                                    <div class="d-flex align-items-center">
+                                        <i
+                                            class="icon-text fa-solid fa-circle-minus"
+                                        ></i>
+                                        <div class="text">Egresos</div>
+                                    </div>
+                                </div>
+                            </router-link>
+                        </div>
+                    </div>
                 </div>
-            </a>
+            </nav>
         </div>
+        <a href="/logout">
+            <div class="btn-logout d-flex align-items-center">
+                <i class="fa-solid fa-circle-xmark"></i>
+                <div class="text">Cerrar sesion</div>
+            </div>
+        </a>
     </div>
+    <div
+        class="back-menu"
+        @click="colapseNav"
+        :class="`${colapse ? '' : 'view-back'}`"
+    ></div>
 </template>
 
 <script setup>
@@ -199,7 +200,46 @@ const colapseNav = () => {
 };
 </script>
 
+<script>
+import axios from "axios";
+export default {
+    data() {
+        return {
+            fechaFormateada: "",
+            userName: "",
+        };
+    },
+    mounted() {
+        this.formatearFechaHora();
+        setInterval(() => {
+            this.formatearFechaHora();
+        }, 1000);
+
+        axios.get("/api/users").then((response) => {
+            if (response.data.data && response.data.data.length > 0) {
+                this.userName = response.data.data[0].name; // Obtén el nombre del primer usuario
+            }
+        });
+    },
+    methods: {
+        formatearFechaHora() {
+            const ahora = new Date();
+            const dia = ahora.getDate().toString().padStart(2, "0");
+            const mes = (ahora.getMonth() + 1).toString().padStart(2, "0"); // Los meses comienzan desde 0
+            const anio = ahora.getFullYear();
+            this.fechaFormateada = `${dia}/${mes}/${anio}`;
+        },
+    },
+};
+</script>
+
 <style scoped>
+.navbar-movil {
+    display: none;
+}
+.back-menu {
+    display: none;
+}
 * {
     font-family: "Roboto";
 }
@@ -211,7 +251,7 @@ h3 {
     font-size: 14px !important;
     font-weight: 500;
 }
-a{
+a {
     text-decoration: none;
 }
 .ul {
@@ -230,12 +270,14 @@ a{
 }
 .menu-side {
     background-color: #f4f6f8;
-    width: 330px;
+    width: 20%;
     padding: 32px 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 100vh;
+    position: fixed;
+    z-index: 1;
 }
 
 .menu-side .user {
@@ -354,6 +396,9 @@ a{
         height: 100vh;
     }
 }
+.colapse-user .menu-side {
+    width: 10% !important;
+}
 .colapse-user .user {
     flex-direction: column;
 }
@@ -373,7 +418,7 @@ a{
 }
 .colapse-user .menu-side {
     width: auto;
-    align-items: center
+    align-items: center;
 }
 .colapse-user .opcion-menu {
     padding-top: 42px;
@@ -430,5 +475,75 @@ a{
     border-radius: 8px;
     margin-right: 0px;
     color: #ff3f3f;
+}
+
+@media screen and (max-width: 1269px) {
+    .menu-side {
+        width: 25%;
+    }
+}
+@media screen and (max-width: 1026px) {
+    .menu-side {
+        width: 27%;
+    }
+}
+@media screen and (max-width: 942px) {
+    .menu-side {
+        width: 28%;
+    }
+}
+@media screen and (max-width: 906px) {
+    .menu-side {
+        width: 29%;
+    }
+}
+@media screen and (max-width: 905px) {
+    .menu-side {
+        width: 40%;
+        left: -40%;
+        transition: ease all 300ms;
+        z-index: 3;
+    }
+    .navbar-movil {
+        display: block;
+        background-color: #1958f7;
+        position: fixed;
+        z-index: 1;
+        padding: 16px;
+        width: 100%;
+    }
+    .navbar-movil i {
+        background-color: #fff6f6;
+        padding: 12px 16px;
+        border-radius: 4px;
+    }
+    .view-menu {
+        left: 0%;
+    }
+    .back-menu {
+        background-color: #0000008a;
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        z-index: 2;
+        opacity: 0;
+        transition: ease all 300ms;
+    }
+    .view-back {
+        display: block;
+        opacity: 1;
+    }
+}
+
+@media screen and (max-width: 669px) {
+    .menu-side {
+        width: 300px;
+        left: -300px;
+        transition: ease all 300ms;
+        z-index: 3;
+    }
+    .view-menu {
+        left: 0px;
+    }
 }
 </style>

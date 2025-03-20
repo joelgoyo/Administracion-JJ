@@ -14,6 +14,7 @@ import AddProductsComponent from './components/AddProductsComponent.vue'
 import EditProductComponent from './components/EditProductComponent.vue'
 import IncomeComponent from './components/IncomeComponent.vue'
 import ExpensesComponent from './components/ExpensesComponent.vue'
+import LoadingComponent from './components/LoadingComponent.vue';
 
 // Definir las rutas
 const routes = [
@@ -46,6 +47,7 @@ app.component('add-products-component', AddProductsComponent);
 app.component('edit-products-component', EditProductComponent);
 app.component('income-component', IncomeComponent);
 app.component('expenses-component', ExpensesComponent);
+app.component('loading-component', LoadingComponent);
 
 // Usar el enrutador en la aplicación Vue
 app.use(router);
