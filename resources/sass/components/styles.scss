@@ -8,15 +8,44 @@
     font-weight: 500;
     background-color: $color-blue;
 }
+.btn-danger {
+    border-radius: 100px;
+    padding: 10px 24px;
+    font-weight: 500;
+    border: none;
+    background-color: $color-red;
+    transition: all 200ms;
+}
+.btn-danger:hover {
+    background-color: #fb2626;
+}
 
 //INPUSTS
+select {
+    .option-default {
+        color: #6c757d;
+    }
+}
 .form-control {
     border-radius: 10px;
     background-color: #dfdfdf;
-    color: #dfdfdf;
+    color: #000000;
     border: none;
 }
+.inputs-content {
+    margin-top: 24px;
+}
+.inputs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
 
+label {
+    color: $text-color-black;
+    font-size: 14px;
+    font-weight: 500;
+}
 h2 {
     color: $text-color-black;
     font-size: 24px;
@@ -40,15 +69,15 @@ h2 {
         margin-left: 27%;
     }
 
-    @media screen and (max-width: 942px){
+    @media screen and (max-width: 942px) {
         width: 72%;
         margin-left: 28%;
     }
-    @media screen and (max-width: 906px){
+    @media screen and (max-width: 906px) {
         width: 71%;
         margin-left: 29%;
     }
-    @media screen and (max-width: 904px){
+    @media screen and (max-width: 904px) {
         width: 100%;
         margin-left: 0%;
         margin-top: 72px;
@@ -128,19 +157,18 @@ h2 {
             margin-right: 0px;
             width: 49%;
             margin-bottom: 24px;
-         }
-         @media screen and (max-width: 508px) {
+        }
+        @media screen and (max-width: 508px) {
             margin-right: 0px;
             width: 100%;
             margin-bottom: 24px;
-         }
+        }
     }
 
-
-     @media screen and (max-width: 1304px) {
+    @media screen and (max-width: 1304px) {
         flex-wrap: wrap;
         margin-bottom: 0px;
-     }
+    }
 }
 .table-container {
     background-color: $content-bg;
@@ -171,7 +199,7 @@ h2 {
             tr {
                 text-align: center;
                 border-radius: 20px;
-                &:nth-child(2n){
+                &:nth-child(2n) {
                     background-color: #eeeeee;
                 }
                 &:hover {
@@ -192,17 +220,28 @@ h2 {
             }
         }
     }
-    @media screen and (max-width: 1228px){
+    @media screen and (max-width: 1228px) {
         .content-table {
             overflow-x: scroll;
-          table{
-            width: 1100px;
-          }  
+            table {
+                width: 1100px;
+            }
         }
     }
 }
-
 .filters label {
     font-weight: 500;
     font-size: 14px;
+}
+.data-clients {
+    border-radius: 20px;
+    border: none;
+    margin-bottom: 24px;
+    h3 {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 0px;
+        margin-right: 12px;
+        color: $text-color-black;
+    }
 }
