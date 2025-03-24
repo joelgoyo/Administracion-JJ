@@ -1,6 +1,25 @@
 @use "../variables.scss" as *;
 //ESTILOS GLOBALES PARA EL PROYECTO
 
+//ICONOS
+.fa-trash{
+    color: #777777;
+    font-size: 18px;
+    transition: all 200ms;
+    cursor: pointer;
+    &:hover{
+        color: #dc3545;
+    }
+}
+.fa-pen-to-square{
+    color: #777777;
+    font-size: 18px;
+    transition: all 200ms;
+    cursor: pointer;
+    &:hover{
+        color: $color-blue;
+    }
+}
 //BOTONES PRINCIPALES
 .btn-primary {
     border-radius: 100px;
@@ -59,7 +78,7 @@ h2 {
 .container-content {
     padding: 20px;
     width: 80%;
-    margin-left: 20%;
+    margin-left: 19%;
     @media screen and (max-width: 1269px) {
         width: 76%;
         margin-left: 25%;
