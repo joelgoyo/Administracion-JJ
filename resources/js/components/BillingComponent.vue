@@ -9,7 +9,7 @@
       <!-- CLIENTES Y REGISTROS DE CLIENTES -->
 
       <div class="data-clients">
-        <button class="btn btn-danger">REGISTRAR NUEVO CLIENTE</button>
+       <router-link to="/customer-registration"><button class="btn btn-danger">REGISTRAR NUEVO CLIENTE</button></router-link>
 
         <div class="inputs-content">
           <label for="">Datos del cliente</label>
@@ -131,6 +131,7 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 import LoadingComponent from "./LoadingComponent.vue";
 
 export default {
@@ -146,10 +147,12 @@ export default {
   },
 
   mounted() {
-      this.formatearFechaHora();
-      setInterval(() => {
-          this.formatearFechaHora();
-      }, 1000);
+    axios
+      .get("/api/billing/productsClients")
+      .then((response) => {
+          this.productsClients = response.data.suppliers;
+          console.log(this.productsClients);
+      })
   },
   methods: {
       formatearFechaHora() {

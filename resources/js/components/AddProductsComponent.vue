@@ -1,82 +1,142 @@
 <template>
-    <!-- HEADER -->
     <div class="container-content">
         <div class="content-title">
-            <h2>Agendar nuevos productos</h2>
+            <h2>Inventario</h2>
             <p>Registrar nuevos productos</p>
         </div>
 
-        <!-- CLIENTES Y REGISTROS DE CLIENTES -->
-
         <div class="data-clients">
-            <div class="inputs-content">
-                <div class="inputs">
-                    <input
-                        type="text"
-                        placeholder="Codigo de barras"
-                        class="form-control"
-                    />
+            <form action="" @submit.prevent="handleSubmit">
+                <div class="inputs-content">
+                    <div class="inputs">
+                        <div class="input">
+                            <input
+                                type="number"
+                                placeholder="Codigo de barras"
+                                class="form-control"
+                                v-model="form.code"
+                            />
+                            <p v-if="errors.code" class="text-danger">
+                                {{ errors.code }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="inputs">
+                        <div class="input">
+                            <input
+                                type="text"
+                                placeholder="Nombre del producto"
+                                class="form-control"
+                                v-model="form.name"
+                            />
+                            <p v-if="errors.name" class="text-danger">
+                                {{ errors.name }}
+                            </p>
+                        </div>
+                        <div class="input">
+                            <input
+                                type="number"
+                                placeholder="Cantidad en stock"
+                                class="form-control"
+                                v-model="form.stock"
+                            />
+                            <p v-if="errors.stock" class="text-danger">
+                                {{ errors.stock }}
+                            </p>
+                        </div>
+                        <div class="input">
+                            <input
+                                type="date"
+                                placeholder="Fecha de vencimiento"
+                                class="form-control"
+                                v-model="form.expiration"
+                            />
+                            <p v-if="errors.expiration" class="text-danger">
+                                {{ errors.expiration }}
+                            </p>
+                        </div>
+                        <div class="input">
+                            <input
+                                type="number"
+                                placeholder="Peso en KG"
+                                class="form-control"
+                                v-model="form.weight"
+                            />
+                            <p v-if="errors.weight" class="text-danger">
+                                {{ errors.weight }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="inputs">
+                        <div class="input">
+                            <select
+                                name=""
+                                aria-placeholder="Proveedor"
+                                class="form-control"
+                                v-model="form.supplier_id"
+                            >
+                                <option value="" class="option-default">
+                                    Proveedor
+                                </option>
+                                <option
+                                    v-for="supplier in suppliers"
+                                    :key="supplier.id"
+                                    :value="supplier.id"
+                                >
+                                    {{ supplier.name }}
+                                </option>
+                            </select>
+                            <p v-if="errors.supplier_id" class="text-danger">
+                                {{ errors.supplier_id }}
+                            </p>
+                        </div>
+                        <div class="input">
+                            <input
+                                type="number"
+                                placeholder="Precio de proveedor"
+                                class="form-control"
+                                v-model="form.provider_price"
+                            />
+                            <p v-if="errors.provider_price" class="text-danger">
+                                {{ errors.provider_price }}
+                            </p>
+                        </div>
+                        <div class="input">
+                            <input
+                                type="number"
+                                placeholder="Precio de venta"
+                                class="form-control"
+                                v-model="form.price"
+                            />
+                            <p v-if="errors.price" class="text-danger">
+                                {{ errors.price }}
+                            </p>
+                        </div>
+                        <div class="input">
+                            <input
+                                type="text"
+                                placeholder="Descripción"
+                                class="form-control"
+                                v-model="form.description"
+                            />
+                            <p v-if="errors.description" class="text-danger">
+                                {{ errors.description }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="inputs">
-                    <input
-                        type="text"
-                        placeholder="Nombre del producto"
-                        class="form-control"
-                    />
-                    <input
-                        type="number"
-                        placeholder="Cantidad en stock"
-                        class="form-control"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Fecha de vencimiento"
-                        class="form-control"
-                    />
-                    <input
-                        type="number"
-                        placeholder="Peso en KG"
-                        class="form-control"
-                    />
-                </div>
-                <div class="inputs">
-                    <select
-                        name=""
-                        aria-placeholder="Tipo de entrega"
-                        class="form-control"
-                    >
-                        <option value="" class="option-default">
-                            Proveedor
-                        </option>
-                        <option value="Entrega a domicilio">Proveedor 1</option>
-                        <option value="Retiro en tienda">Proveedor 2</option>
-                    </select>
-                    <input
-                        type="text"
-                        placeholder="Precio de proveedor"
-                        class="form-control"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Precio de venta"
-                        class="form-control"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Descripción"
-                        class="form-control"
-                    />
-                </div>
-            </div>
-            <button class="btn btn-primary">
-                <i class="fa-solid fa-floppy-disk"></i> GUARDAR PRODUCTO
-            </button>
+
+                <button class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk" type="submit"></i>
+                    GUARDAR PRODUCTO
+                </button>
+            </form>
         </div>
 
         <div class="table-container">
             <h3 class="mb-3">
                 Productos registrados:
-                <strong class="text-success">1000</strong>
+                <strong class="text-success">{{ countProducts.products }}</strong>
             </h3>
             <div class="d-flex justify-content-between align-items-end">
                 <div class="filters">
@@ -86,144 +146,475 @@
                             type="text"
                             class="form-control mr-2"
                             placeholder="Codigo de porducto"
+                            v-model="filters.code"
                         />
                         <input
                             type="text"
                             class="form-control"
                             placeholder="Nombre del producto"
+                            v-model="filters.name"
                         />
                     </div>
                 </div>
             </div>
             <div class="content-table">
-                <table class="table mt-3 table-add-product">
+                <table class="table mt-3 table-invetory-product">
                     <thead>
                         <tr>
+                            <th scope="col">#</th>
                             <th scope="col">Nombre del producto</th>
                             <th scope="col">Codigo</th>
                             <th scope="col">En stock</th>
+                            <th scope="col">Descripcion</th>
                             <th scope="col">Fecha de registro</th>
                             <th scope="col">Vencimiento</th>
                             <th scope="col">Peso</th>
                             <th scope="col">Proveedor</th>
                             <th scope="col">Precio de proveedor</th>
                             <th scope="col">Precio de venta</th>
+                            <th scope="col">Editar</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><strong> Nombre del Producto </strong></td>
-                            <td>10001</td>
+                        <tr
+                            v-for="(product, index) in filteredProducts"
+                            :key="product.id"
+                        >
+                            <th scope="row">{{ index + 1 }}</th>
+                            <td>
+                                <strong>{{ product.name }}</strong>
+                            </td>
+                            <td>
+                                <strong>{{ product.code }} </strong>
+                            </td>
                             <td>
                                 <div class="text-dark">
                                     <i class="fa-solid fa-box mr-1"></i>
-                                    <strong>2</strong>
+                                    <strong>{{ product.stock }}</strong>
                                 </div>
                             </td>
-                            <td class="text-danger">
-                                <strong>20/03/2025</strong>
-                            </td>
+                            <td>{{ product.description }}</td>
                             <td class="text-success">
-                                <strong>20/03/2025</strong>
+                                <strong>{{
+                                    formatDate(product.created_at)
+                                }}</strong>
                             </td>
-                            <td><strong>1kg</strong></td>
-                            <td><strong>Nombre del proveedor</strong></td>
-                            <td><strong>$20</strong></td>
-                            <td><strong>$50</strong></td>
-                        </tr>
-                        <tr>
-                            <td><strong> Nombre del Producto </strong></td>
-                            <td>10001</td>
+                            <td class="text-danger">
+                                <strong>{{ product.expirationDate }}</strong>
+                            </td>
                             <td>
-                                <div class="text-dark">
-                                    <i class="fa-solid fa-box mr-1"></i>
-                                    <strong>2</strong>
-                                </div>
+                                <strong>{{ product.weight }}kg</strong>
                             </td>
-                            <td class="text-danger">
-                                <strong>20/03/2025</strong>
-                            </td>
-                            <td class="text-success">
-                                <strong>20/03/2025</strong>
-                            </td>
-                            <td><strong>1kg</strong></td>
-                            <td><strong>Nombre del proveedor</strong></td>
-                            <td><strong>$20</strong></td>
-                            <td><strong>$50</strong></td>
-                        </tr>
-                        <tr>
-                            <td><strong> Nombre del Producto </strong></td>
-                            <td>10001</td>
                             <td>
-                                <div class="text-dark">
-                                    <i class="fa-solid fa-box mr-1"></i>
-                                    <strong>2</strong>
-                                </div>
+                                <strong>{{ product.supplier_id }}</strong>
                             </td>
-                            <td class="text-danger">
-                                <strong>20/03/2025</strong>
+                            <td>
+                                <strong>{{ product.priceSupplier }}$</strong>
                             </td>
-                            <td class="text-success">
-                                <strong>20/03/2025</strong>
+                            <td>
+                                <strong>{{ product.priceUnit }}$</strong>
                             </td>
-                            <td><strong>1kg</strong></td>
-                            <td><strong>Nombre del proveedor</strong></td>
-                            <td><strong>$20</strong></td>
-                            <td><strong>$50</strong></td>
+
+                            <td>
+                                <i
+                                    title="Editar"
+                                    class="fa-solid fa-pen-to-square mr-2"
+                                    @click="openEditModal(product)"
+                                ></i>
+                                <i
+                                    title="Eliminar"
+                                    class="fa-solid fa-trash"
+                                    @click="deleteProduct(product.id)"
+                                ></i>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
+    <div v-if="editModal.show" class="modal-x">
+        <div class="modal-y">
+            <div class="content-title">
+                <h2>Editar datos del cliente</h2>
+                <p>Editar</p>
+            </div>
+
+            <form action="" @submit.prevent="updateProduct">
+                <div class="inputs">
+                    <div class="w-100">
+                        <label for="">Codigo de barras</label>
+                        <input
+                            type="number"
+                            v-model="editModal.products.code"
+                            placeholder="Codigo de barras"
+                            class="form-control mb-2"
+                        />
+                    </div>
+                </div>
+                <div class="inputs">
+                    <div class="w-100">
+                        <label for="">Nombre del producto</label>
+                        <input
+                            type="text"
+                            v-model="editModal.products.name"
+                            placeholder="Nombre"
+                            class="form-control mb-2"
+                        />
+                    </div>
+                    <div class="w-100">
+                        <label for="">Productos en stock</label>
+                        <input
+                            type="number"
+                            v-model="editModal.products.stock"
+                            placeholder="Cantidad en stock"
+                            class="form-control mb-2"
+                        />
+                    </div>
+                </div>
+
+                <div class="inputs">
+                    <div class="w-100">
+                        <label for=""> Fecha de expiracion </label>
+                        <input
+                            type="date"
+                            v-model="editModal.products.expirationDate"
+                            placeholder="Fecha de vencimiento"
+                            class="form-control mb-2"
+                        />
+                    </div>
+                    <div class="w-100">
+                        <label for="">Peso del producto en KG</label>
+                        <input
+                            type="number"
+                            v-model="editModal.products.weight"
+                            placeholder="Cantidad en stock"
+                            class="form-control mb-2"
+                        />
+                    </div>
+                </div>
+                <div class="inputs">
+                    <div class="w-100">
+                        <label for="">Proveedores</label>
+                        <select
+                            name=""
+                            aria-placeholder="Proveedor"
+                            class="form-control"
+                            v-model="editModal.products.supplier_id"
+                        >
+                            <option value="" class="option-default">
+                                Proveedor
+                            </option>
+                            <option
+                                v-for="supplier in suppliers"
+                                :key="supplier.id"
+                                :value="supplier.id"
+                            >
+                                {{ supplier.name }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="w-100">
+                        <label for="">Precio de proveedor</label>
+                        <input
+                            type="number"
+                            placeholder="Precio de proveedor"
+                            class="form-control"
+                            v-model="editModal.products.priceSupplier"
+                        />
+                    </div>
+                </div>
+                <div class="inputs">
+                    <div class="w-100">
+                        <label for="">Precio de venta</label>
+                    <input
+                        type="number"
+                        placeholder="Precio de venta"
+                        class="form-control"
+                        v-model="editModal.products.priceUnit"
+                    />
+                </div>
+                <div class="w-100">
+                    <label for="">Descripcion</label>
+                    <input
+                        type="text"
+                        placeholder="Descripcion"
+                        class="form-control"
+                        v-model="editModal.products.description"
+                    />
+                </div>
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">
+                    Actualizar
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    @click="closeEditModal"
+                >
+                    Cancelar
+                </button>
+            </form>
+        </div>
+    </div>
 </template>
+
 <script>
-import LoadingComponent from "./LoadingComponent.vue";
+import * as yup from "yup";
+import axios from "axios";
+import Swal from "sweetalert2";
+
+const validationSchema = yup.object({
+    code: yup.string().required("El codigo es requerido."),
+    name: yup.string().required("Nombre es requerido."),
+    stock: yup.string().required("El stock es requerido."),
+    expiration: yup.string().required("La fecha de vencimiento es requerida."),
+    weight: yup.string().required("El peso es requerido."),
+    supplier_id: yup.string().required("El proveedor es requerido."),
+    provider_price: yup
+        .string()
+        .required("El precio de proveedor es requerido."),
+    price: yup.string().required("El precio es requerido."),
+    description: yup.string(),
+});
 
 export default {
     data() {
         return {
-            fechaFormateada: "",
-            isLoading: true,
-            data: null,
+            form: {
+                code: "",
+                name: "",
+                stock: "",
+                expiration: "",
+                weight: "",
+                supplier_id: "",
+                provider_price: "",
+                price: "",
+                description: "",
+            },
+            countProducts: "",
+            products: [],
+            suppliers: [],
+            errors: {},
+            editModal: { show: false, client: {} },
+            filters: {
+                code: "",
+                name: "", 
+            },
         };
     },
-    components: {
-        LoadingComponent,
+    components: {},
+
+    computed: {
+        filteredProducts() {
+            const filtered = this.products.filter((product) => {
+                const codeMatch =
+                    !this.filters.code ||
+                    product.code.toString().includes(this.filters.code);
+                const nameMatch =
+                    !this.filters.name ||
+                    product.name.toLowerCase().includes(this.filters.name.toLowerCase()); // Asegúrate de que solo comparas el nombre de la empresa.
+                return codeMatch && nameMatch;
+            });
+            return filtered.slice();
+        },
     },
 
     mounted() {
-        this.formatearFechaHora();
-        setInterval(() => {
-            this.formatearFechaHora();
-        }, 1000);
+        this.fechSuppliers();
+        this.fetchProducts();
+        this.fechCountProducts();
     },
     methods: {
-        formatearFechaHora() {
-            const ahora = new Date();
-            const dia = ahora.getDate().toString().padStart(2, "0");
-            const mes = (ahora.getMonth() + 1).toString().padStart(2, "0"); // Los meses comienzan desde 0
-            const anio = ahora.getFullYear();
-            const horas = ahora.getHours().toString().padStart(2, "0");
-            const minutos = ahora.getMinutes().toString().padStart(2, "0");
-            const segundos = ahora.getSeconds().toString().padStart(2, "0");
-            this.fechaFormateada = `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
+
+        formatDate(dateString) {
+            if (!dateString) return "";
+            const date = new Date(dateString);
+            return date.toLocaleDateString();
+        },
+
+        openEditModal(products) {
+            this.editModal.products = { ...products };
+            this.editModal.show = true;
+        },
+
+        closeEditModal() {
+            this.editModal.show = false;
+        },
+
+        updateProduct() {
+            axios
+                .put(
+                    `/api/products/update/${this.editModal.products.id}`,
+                    this.editModal.products
+                )
+                .then(() => {
+                    Swal.fire(
+                        "Producto actualizado correctamente",
+                        "",
+                        "success"
+                    );
+                    this.closeEditModal();
+                    this.fetchProducts();
+                    this.fechCountProducts();
+                })
+                .catch(() => {
+                    Swal.fire(
+                        "Error al actualizar el producto ya estos datos estan en uso",
+                        "",
+                        "error"
+                    );
+                });
+        },
+
+        fechSuppliers() {
+            axios
+                .get("/api/suppliers/list")
+                .then((response) => {
+                    this.suppliers = response.data.suppliers;
+                })
+                .catch((error) => {
+                    console.log("Error fetching suppliers:", error);
+                });
+        },
+
+        fechCountProducts() {
+            axios
+                .get("/api/products/count")
+                .then((response) => {
+                    this.countProducts = response.data;
+                    console.log(this.countProducts);
+                })
+                .catch((error) => {
+                    console.log("Error fetching suppliers:", error);
+                });
+        },
+
+        fetchProducts() {
+            axios
+                .get("/api/products/list")
+                .then((response) => {
+                    this.products = response.data.products.reverse();
+                })
+                .catch((error) => {
+                    console.log("Error fetching products:", error);
+                });
+        },
+
+        deleteProduct(id) {
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "No podrás revertir esto.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, eliminarlo!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios
+                        .delete(`/api/products/delete/${id}`)
+                        .then((response) => {
+                            Swal.fire({
+                                title: "Eliminado correctamente",
+                                icon: "success",
+                                draggable: true,
+                            });
+                            this.fetchProducts();
+                            this.fechCountProducts();
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            Swal.fire({
+                                title: "Error",
+                                text: "No se pudo eliminar el producto.",
+                                icon: "error",
+                            });
+                        });
+                }
+            });
+        },
+
+        async handleSubmit() {
+            try {
+                await validationSchema.validate(this.form, {
+                    abortEarly: false,
+                });
+                this.errors = {};
+
+                const codeResponse = await axios.get(
+                    `/api/products/check-code/${this.form.code}`
+                );
+                if (codeResponse.data.exists) {
+                    this.errors.code =
+                        "Este codigo de producto ya está registrado.";
+                    return;
+                }
+
+                const NameResponse = await axios.get(
+                    `/api/products/check-name/${this.form.name}`
+                );
+                if (NameResponse.data.exists) {
+                    this.errors.name =
+                        "Este nombre de producto ya esta registrado.";
+                    return;
+                }
+
+                axios
+                    .post("/api/products/save", this.form)
+                    .then(() => {
+                        Swal.fire({
+                            title: "Exitoso",
+                            text: "Producto registrado correctamente",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
+                        });
+                        this.form = {
+                            code: "",
+                            name: "",
+                            stock: "",
+                            expiration: "",
+                            weight: "",
+                            supplier_id: "",
+                            provider_price: "",
+                            price: "",
+                            description: "",
+                        };
+                        this.fetchProducts();
+                        this.fechCountProducts();
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "No se ha podido registrar el producto",
+                        });
+                    });
+            } catch (err) {
+                this.errors = {};
+                err.inner.forEach((error) => {
+                    this.errors[error.path] = error.message;
+                });
+            }
         },
     },
 };
 </script>
+
 <style>
 /* ESTILOS INDEPENDIENTES PARA ESTE COMPONENTE */
 .content-table {
     overflow-x: auto;
     width: 100%;
 }
-.table-add-product {
-    width: 1250px;
+.table-invetory-product {
+    width: 1350px;
 }
 @media (max-width: 1229px) {
-    .table-add-product {
-        width: 1250px !important;
+    .table-invetory-product {
+        width: 1350px;
     }
 }
 @media (max-width: 675px) {

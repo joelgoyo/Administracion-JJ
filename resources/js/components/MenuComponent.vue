@@ -56,7 +56,7 @@
                             <div class="text">Facturacion</div>
                         </div>
                     </router-link>
-                    <div class="link" @click="arrowToggleTwo">
+                    <router-link to="/add-products" class="link">
                         <div
                             class="menu-item d-flex justify-content-between align-items-center"
                         >
@@ -64,48 +64,8 @@
                                 <i class="icon-text fa-solid fa-box"></i>
                                 <div class="text">Inventario</div>
                             </div>
-                            <i
-                                class="arrow fa-solid"
-                                :class="`${
-                                    changeTwo ? 'fa-angle-down ' : 'fa-angle-up'
-                                }`"
-                            ></i>
                         </div>
-
-                        <div
-                            class="ul"
-                            :class="`${changeTwo ? 'delete' : 'view'}`"
-                        >
-                            <router-link to="/add-products" class="link">
-                                <div
-                                    class="menu-item d-flex justify-content-between align-items-center"
-                                >
-                                    <div class="d-flex align-items-center">
-                                        <i
-                                            class="icon-text fa-solid fa-circle-plus"
-                                        ></i>
-                                        <div class="text">
-                                            Agregar productos
-                                        </div>
-                                    </div>
-                                </div>
-                            </router-link>
-                            <router-link to="/edit-products" class="link">
-                                <div
-                                    class="menu-item d-flex justify-content-between align-items-center"
-                                >
-                                    <div class="d-flex align-items-center">
-                                        <i
-                                            class="icon-text fa-solid fa-pen-to-square"
-                                        ></i>
-                                        <div class="text">
-                                            Editar o eliminar productos
-                                        </div>
-                                    </div>
-                                </div>
-                            </router-link>
-                        </div>
-                    </div>
+                    </router-link>
                     <router-link to="/customer-registration" class="link">
                         <div class="menu-item d-flex align-items-center">
                             <i class="icon-text fa-solid fa-users"></i>

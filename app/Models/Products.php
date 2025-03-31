@@ -24,7 +24,7 @@ class Products extends Model
         'image',
         'status',
     ];
-
+    
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
