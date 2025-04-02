@@ -29,4 +29,8 @@ class Products extends Model
     {
         return $this->belongsTo(Supplier::class);
     }
+    public function bill(){
+        return $this->hasMany(Bill::class);
+    }
+
 }
