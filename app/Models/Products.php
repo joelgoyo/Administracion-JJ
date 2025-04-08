@@ -29,8 +29,9 @@ class Products extends Model
     {
         return $this->belongsTo(Supplier::class);
     }
-    public function bill(){
-        return $this->hasMany(Bill::class);
-    }
 
+    public function productInvoice()
+    {
+        return $this->hasMany(ProductInvoice::class);
+    }
 }

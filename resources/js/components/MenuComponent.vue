@@ -56,6 +56,12 @@
                             <div class="text">Facturacion</div>
                         </div>
                     </router-link>
+                    <router-link to="/sales" class="link">
+                        <div class="menu-item d-flex align-items-center">
+                            <i class="icon-text fa-solid fa-chart-simple"></i>
+                            <div class="text">Ventas</div>
+                        </div>
+                    </router-link>
                     <router-link to="/add-products" class="link">
                         <div
                             class="menu-item d-flex justify-content-between align-items-center"

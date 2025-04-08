@@ -10,10 +10,11 @@ import BillingComponent from './components/BillingComponent.vue';
 import SupplierRegistrationComponent from './components/SupplierRegistrationComponent.vue'; 
 import CustomerRegistrationComponent from './components/CustomerRegistrationComponent.vue'; 
 import AccountingComponent from './components/AccountingComponent.vue';
-import AddProductsComponent from './components/AddProductsComponent.vue'
-import EditProductComponent from './components/EditProductComponent.vue'
-import IncomeComponent from './components/IncomeComponent.vue'
-import ExpensesComponent from './components/ExpensesComponent.vue'
+import AddProductsComponent from './components/AddProductsComponent.vue';
+import EditProductComponent from './components/EditProductComponent.vue';
+import IncomeComponent from './components/IncomeComponent.vue';
+import ExpensesComponent from './components/ExpensesComponent.vue';
+import SalesComponent from './components/SalesComponent.vue';
 import LoadingComponent from './components/LoadingComponent.vue';
 
 // Definir las rutas
@@ -27,6 +28,7 @@ const routes = [
     { path: '/edit-products', component: EditProductComponent},
     { path: '/income', component: IncomeComponent},
     { path: '/expenses', component: ExpensesComponent},
+    { path: '/sales', component: SalesComponent},
 ];
 
 // Crear la instancia del enrutador
@@ -48,6 +50,7 @@ app.component('edit-products-component', EditProductComponent);
 app.component('income-component', IncomeComponent);
 app.component('expenses-component', ExpensesComponent);
 app.component('loading-component', LoadingComponent);
+app.component('sales-component', SalesComponent);
 
 // Usar el enrutador en la aplicación Vue
 app.use(router);

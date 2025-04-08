@@ -11,6 +11,7 @@ class Bill extends Model
 
     protected $fillable = [
         'client_id',
+        'order',
         'PlaceIssue',
         'date',
         'typeDelivery',
@@ -19,14 +20,17 @@ class Bill extends Model
         'deliveryNote',
         'deliveryDate',
         'status',
+        'amount',
+        'amount_bs',
     ];
 
     public function client()
     {
         return $this->belongsTo(Client::class);
     }
-    public function products()
+    
+    public function productInvoice()
     {
-        return $this->belongsTo(Products::class);
+        return $this->hasMany(ProductInvoice::class);
     }
 }

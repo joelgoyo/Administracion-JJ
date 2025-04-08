@@ -18,3 +18,5 @@ class Client extends Model
         'address',
     ];
 }
+
+

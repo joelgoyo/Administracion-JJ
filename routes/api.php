@@ -56,7 +56,10 @@ Route::prefix('products')->group(function (){
 
 //FACTURACION 
 Route::prefix('billing')->group(function (){
-    Route::get('/productsClients', [BillingController::class, 'index']);
+    Route::post('/save', [BillingController::class, 'save']);
+    Route::post('/save-billProducts', [BillingController::class, 'saveBillingProducts']);
+    Route::get('/list', [BillingController::class, 'list']);
+    Route::get('/listInvoice', [BillingController::class, 'listInvoice']);
 });
 
 
