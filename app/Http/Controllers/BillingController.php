@@ -7,6 +7,8 @@ use App\Models\Bill;
 use App\Models\Products;
 use App\Models\Client;
 use App\Models\ProductInvoice;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class BillingController extends Controller
 {
@@ -79,6 +81,55 @@ class BillingController extends Controller
             'status' => 200,
             'message' => 'Operación realizada correctamente',
         ]);
+    }
+
+    public function updateStock(Request $request)
+    {
+        // Validar la solicitud
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => 'Validación fallida',
+                'messages' => $validator->errors(),
+            ], 422);
+        }
+
+        // Obtener los datos validados
+        $productId = $request->input('product_id');
+        $quantity = $request->input('quantity');
+
+        // Iniciar una transacción para garantizar la integridad de los datos
+        return DB::transaction(function () use ($productId, $quantity) {
+            // Buscar el producto
+            $product = Products::findOrFail($productId);
+
+            // Verificar si hay suficiente stock
+            if ($product->stock < $quantity) {
+                return response()->json([
+                    'error' => 'Stock insuficiente',
+                    'message' => "El producto {$product->name} solo tiene {$product->stock} unidades disponibles.",
+                ], 400);
+            }
+
+            // Restar la cantidad del stock
+            $product->stock -= $quantity;
+
+            // Guardar los cambios
+            $product->save();
+
+            return response()->json([
+                'message' => 'Stock actualizado correctamente',
+                'product' => [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'stock' => $product->stock,
+                ],
+            ], 200);
+        });
     }
 }
 

@@ -61,6 +61,7 @@ Route::prefix('billing')->group(function (){
     Route::get('/list', [BillingController::class, 'list']);
     Route::get('/listInvoice', [BillingController::class, 'listInvoice']);
     Route::delete('/delete/{id}', [BillingController::class, 'delete']);
+    Route::post('/updateStock', [BillingController::class, 'updateStock']);
 });
 
 

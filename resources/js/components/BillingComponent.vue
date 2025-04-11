@@ -30,12 +30,9 @@
         </div>
 
         <div class="data-clients">
-            <router-link to="/customer-registration"
-                ><button class="btn btn-danger">
-                    REGISTRAR NUEVO CLIENTE
-                </button></router-link
-            >
-
+            <router-link to="/customer-registration">
+                <button class="btn btn-danger">REGISTRAR NUEVO CLIENTE</button>
+            </router-link>
             <div class="inputs-content">
                 <label for="">Datos del cliente</label>
                 <div class="inputs">
@@ -137,12 +134,6 @@
                         <option value="Urdaneta">Urdaneta (Barbacoas)</option>
                         <option value="Zamora">Zamora (Villa de Cura)</option>
                     </select>
-                    <input
-                        type="date"
-                        placeholder="Fecha"
-                        class="form-control"
-                        v-model="billing.date"
-                    />
                     <select
                         name=""
                         aria-placeholder="Tipo de entrega"
@@ -187,18 +178,6 @@
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
                         </button>
                     </div>
-                    <input
-                        type="text"
-                        placeholder="Nota de entrega"
-                        class="form-control"
-                        v-model="billing.deliveryNote"
-                    />
-                    <input
-                        type="date"
-                        placeholder="De fecha"
-                        class="form-control"
-                        v-model="billing.deliveryDate"
-                    />
 
                     <select class="form-control" v-model="billing.bank">
                         <option value="" class="option-default">
@@ -256,6 +235,18 @@
                             N58 BANCO DIGITAL BANCO MICROFINANCIERO S.A.
                         </option>
                     </select>
+
+                    <select class="form-control">
+                        <option value="" class="option-default">
+                            Seleccione una tasa
+                        </option>
+                        <option value="1">
+                            Promedio - 1$ = {{ dolarPromedio }}Bs
+                        </option>
+                        <option value="2">
+                            BCV - 1$ = {{ dolarBcv.price }}$
+                        </option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -272,6 +263,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Producto</th>
                             <th scope="col">Codigo</th>
+                            <th scope="col">Stock</th>
                             <th scope="col">Cantidad</th>
                             <th scope="col">Peso KG</th>
                             <th scope="col">Precio UNIT</th>
@@ -297,6 +289,13 @@
                             <td>{{ item.product.code }}</td>
                             <td>
                                 <div class="text-dark">
+                                    <i class="fa-solid fa-box mr-1"></i>
+                                    <strong>{{ item.product.stock }}</strong>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="text-danger">
                                     <i class="fa-solid fa-box mr-1"></i>
                                     <strong>{{ item.quantity }}</strong>
                                 </div>
@@ -360,6 +359,7 @@
                                 <th scope="col">Seleccionar</th>
                                 <th scope="col">Producto</th>
                                 <th scope="col">Codigo</th>
+                                <th scope="col">Stock</th>
                                 <th scope="col">Cantidad</th>
                                 <th scope="col">Peso KG</th>
                                 <th scope="col">Precio UNIT</th>
@@ -389,6 +389,12 @@
                                     <strong>{{ product.name }}</strong>
                                 </td>
                                 <td>{{ product.code }}</td>
+                                <td>
+                                    <div class="text-dark">
+                                        <i class="fa-solid fa-box mr-1"></i>
+                                        <strong>{{ product.stock }}</strong>
+                                    </div>
+                                </td>
                                 <td>
                                     <input
                                         type="number"
@@ -468,6 +474,7 @@ export default {
                 order: "",
                 amount: "",
                 amount_bs: "",
+                created_at: "",
             },
             newlyCreatedBillingId: null,
             billingProducts: {
@@ -493,6 +500,7 @@ export default {
         this.clientsDate();
         this.productsList();
     },
+
     computed: {
         filteredProductList() {
             if (this.productFilter) {
@@ -512,11 +520,29 @@ export default {
             );
         },
     },
+
     methods: {
         generateOrderNumber() {
             const timestamp = Date.now().toString(36);
             const randomPart = Math.random().toString(36).substring(2, 8);
             this.billing.order = `ORD-${timestamp}-${randomPart.toUpperCase()}`;
+        },
+
+        formatDate(dateString) {
+            if (!dateString) return "Fecha no disponible";
+            let date;
+            if (dateString.includes("-") && !dateString.includes("T")) {
+                const [day, month, year] = dateString.split("-");
+                date = new Date(`${year}-${month}-${day}`);
+            } else {
+                date = new Date(dateString);
+            }
+            if (isNaN(date.getTime())) return "Fecha inválida";
+            return date.toLocaleDateString("es-ES", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            });
         },
 
         printInvoice() {
@@ -556,6 +582,7 @@ export default {
             let companyInfoX = margin + logoWidth + 10;
 
             // Función para añadir texto alineado a la izquierda
+
             const addLeftText = (text, x, currentY, style = {}) => {
                 pdf.setFontSize(style.fontSize || 10);
                 pdf.setFont(
@@ -682,7 +709,7 @@ export default {
             pdf.setFont("helvetica", "bold");
             const invoiceInfo = [
                 [`Orden #:`, this.billing.order],
-                [`Fecha:`, this.billing.date],
+                [`Fecha:`, this.formatDate(this.billing.created_at)],
                 [`Lugar de Emisión:`, this.billing.PlaceIssue],
                 [`Tipo de Pago:`, this.billing.typePayment],
             ];
@@ -830,16 +857,44 @@ export default {
         },
 
         saveBilling() {
+            if (
+                this.selectedProducts.length === 0 ||
+                !this.client_id ||
+                !this.billing.PlaceIssue ||
+                !this.billing.typePayment ||
+                !this.billing.bank
+            ) {
+                let message = "";
+                if (this.selectedProducts.length === 0 && !this.client_id) {
+                    message =
+                        "No has agregado productos ni seleccionado un cliente.";
+                } else if (this.selectedProducts.length === 0) {
+                    message = "No tienes productos agregados.";
+                } else if (!this.client_id) {
+                    message = "No has seleccionado un cliente.";
+                } else if (!this.billing.PlaceIssue) {
+                    message = "No has seleccionado el lugar de emisión.";
+                } else if (!this.billing.typePayment) {
+                    message = "No has seleccionado el tipo de pago.";
+                } else {
+                    message = "No has seleccionado un banco.";
+                }
+                Swal.fire({
+                    icon: "error",
+                    title: "Datos incompletos",
+                    text:
+                        message +
+                        " Por favor completa los datos para crear la factura.",
+                    confirmButtonText: "Aceptar",
+                });
+                return;
+            }
+
             this.billing.client_id = this.client_id || null;
             this.billing.amount = this.calculateTotal;
             this.billing.amount_bs = this.billing.amount * this.dolarPromedio;
 
             this.generateOrderNumber();
-            console.log(
-                "Orden de compra justo antes del post:",
-                this.billing.order
-            );
-            console.log("Datos de la factura a enviar:", this.billing);
 
             axios
                 .post("/api/billing/save", {
@@ -847,20 +902,17 @@ export default {
                 })
                 .then((response) => {
                     this.newlyCreatedBillingId = response.data.billing.id;
-                    console.log(
-                        "ID de la factura creada:",
-                        this.newlyCreatedBillingId
-                    );
+                    this.billing.created_at =
+                        response.data.billing.created_at ||
+                        new Date().toISOString();
 
-                    this.printInvoice();
                     this.saveBillProducts();
+                    this.printInvoice();
                     this.resetBillingForm();
 
                     Swal.fire({
                         title: "Exitoso",
-                        text:
-                            "Factura registrada correctamente con ID: " +
-                            this.newlyCreatedBillingId,
+                        text: "Factura registrada correctamente",
                         icon: "success",
                         confirmButtonText: "Aceptar",
                     });
@@ -874,6 +926,7 @@ export default {
                     });
                 });
         },
+
         saveBillProducts() {
             if (
                 this.newlyCreatedBillingId &&
@@ -882,12 +935,8 @@ export default {
                 const billProductsData = this.selectedProducts.map((item) => ({
                     bill_id: this.newlyCreatedBillingId,
                     product_id: item.product.id,
+                    quantity: item.quantity, // Incluir la cantidad para restar del stock
                 }));
-
-                console.log(
-                    "Productos a guardar en la factura:",
-                    billProductsData
-                ); // Verificar los IDs antes de enviar
 
                 axios
                     .post("/api/billing/save-billProducts", {
@@ -898,6 +947,35 @@ export default {
                             "Productos de la factura guardados exitosamente:",
                             response.data
                         );
+
+                        billProductsData.forEach((item) => {
+                            axios
+                                .post("/api/billing/updateStock", {
+                                    product_id: item.product_id,
+                                    quantity: item.quantity,
+                                })
+                                .then(() => {
+                                    // Actualizar el stock en el frontend
+                                    const product = this.products.find(
+                                        (p) => p.id === item.product_id
+                                    );
+                                    if (product) {
+                                        product.stock -= item.quantity;
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error(
+                                        "Error al actualizar el stock:",
+                                        error
+                                    );
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Error",
+                                        text: `Error al actualizar el stock del producto ID ${item.product_id}.`,
+                                    });
+                                });
+                        });
+
                         this.billingProducts = []; // Limpiar el array después de guardar
                     })
                     .catch((error) => {
@@ -917,6 +995,7 @@ export default {
                 );
             }
         },
+
         resetBillingForm() {
             this.billing = {
                 client_id: null,
@@ -940,9 +1019,11 @@ export default {
             this.newlyCreatedBillingId = null;
             this.billingProducts = [];
         },
+
         removeProduct(index) {
             this.selectedProducts.splice(index, 1);
         },
+
         filterClients() {
             if (this.client_dni) {
                 this.filteredClients = this.listClients.filter((client) =>
@@ -952,6 +1033,7 @@ export default {
                 this.filteredClients = [];
             }
         },
+
         selectClient(client) {
             this.client_id = client.id;
             this.client_dni = client.dni;
@@ -960,24 +1042,45 @@ export default {
             this.clientPhone = client.phone;
             this.filteredClients = []; // Limpia la lista de sugerencias después de seleccionar
         },
+
         clientsDate() {
             axios.get("/api/clients/list").then((response) => {
                 this.listClients = response.data.clients;
             });
         },
+
         productsList() {
             axios.get("/api/products/list").then((response) => {
                 this.products = response.data.products;
                 this.products.forEach((product) => {
                     product.selected = false;
                     product.modalQuantity = 1;
+                    product.stock = product.stock || 0;
                 });
             });
         },
+
         addSelectedProductsToInvoice() {
             const selected = this.products.filter(
                 (product) => product.selected
             );
+
+            // Validar stock antes de agregar
+            let hasError = false;
+            selected.forEach((product) => {
+                if (product.modalQuantity > product.stock) {
+                    hasError = true;
+                    Swal.fire({
+                        icon: "error",
+                        title: "Stock insuficiente",
+                        text: `No hay suficiente stock para ${product.name}. Disponible: ${product.stock} unidades.`,
+                    });
+                }
+            });
+
+            if (hasError) return; // Detener si hay error de stock
+
+            // Agregar productos a la factura
             selected.forEach((product) => {
                 const existingProduct = this.selectedProducts.find(
                     (item) => item.product.id === product.id
@@ -993,6 +1096,7 @@ export default {
                 product.selected = false;
                 product.modalQuantity = 1;
             });
+
             this.showProductModal = false;
         },
     },
