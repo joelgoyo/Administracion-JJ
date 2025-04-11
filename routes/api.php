@@ -60,6 +60,7 @@ Route::prefix('billing')->group(function (){
     Route::post('/save-billProducts', [BillingController::class, 'saveBillingProducts']);
     Route::get('/list', [BillingController::class, 'list']);
     Route::get('/listInvoice', [BillingController::class, 'listInvoice']);
+    Route::delete('/delete/{id}', [BillingController::class, 'delete']);
 });
 
 

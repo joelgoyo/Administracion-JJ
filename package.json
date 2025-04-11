@@ -16,11 +16,15 @@
         "vue": "^3.5.13"
     },
     "dependencies": {
+        "@vuepic/vue-datepicker": "^11.0.2",
+        "chart.js": "^4.4.8",
+        "date-fns": "^4.1.0",
         "font-awesome": "^4.7.0",
         "jsbarcode": "^3.11.6",
         "jspdf": "^3.0.1",
         "jspdf-autotable": "^5.0.2",
         "sweetalert2": "^11.17.2",
+        "vue-chartjs": "^5.3.2",
         "vue-datepicker-next": "^1.0.3",
         "vue-pagination-2": "^3.1.0",
         "vue-router": "^4.5.0",

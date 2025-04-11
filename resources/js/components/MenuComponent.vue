@@ -72,18 +72,7 @@
                             </div>
                         </div>
                     </router-link>
-                    <router-link to="/customer-registration" class="link">
-                        <div class="menu-item d-flex align-items-center">
-                            <i class="icon-text fa-solid fa-users"></i>
-                            <div class="text">Registro de cliente</div>
-                        </div>
-                    </router-link>
-                    <router-link to="/supplier-registration" class="link">
-                        <div class="menu-item d-flex align-items-center">
-                            <i class="icon-text fa-solid fa-user"></i>
-                            <div class="text">Registro de provedores</div>
-                        </div>
-                    </router-link>
+
                     <div class="link" @click="arrowToggle">
                         <div
                             class="menu-item d-flex justify-content-between align-items-center"
@@ -92,7 +81,7 @@
                                 <i
                                     class="icon-text fa-solid fa-hand-holding-dollar"
                                 ></i>
-                                <div class="text">Contabilidad</div>
+                                <div class="text">Registros</div>
                             </div>
                             <i
                                 class="arrow fa-solid"
@@ -105,27 +94,27 @@
                             class="ul"
                             :class="`${change ? 'delete' : 'view'}`"
                         >
-                            <router-link to="/income" class="link">
+                            <router-link
+                                to="/customer-registration"
+                                class="link"
+                            >
                                 <div
-                                    class="menu-item d-flex justify-content-between align-items-center"
+                                    class="menu-item d-flex align-items-center"
                                 >
-                                    <div class="d-flex align-items-center">
-                                        <i
-                                            class="icon-text fa-solid fa-circle-plus"
-                                        ></i>
-                                        <div class="text">Ingresos</div>
-                                    </div>
+                                    <i class="icon-text fa-solid fa-users"></i>
+                                    <div class="text">Registro de cliente</div>
                                 </div>
                             </router-link>
-                            <router-link to="/expenses" class="link">
+                            <router-link
+                                to="/supplier-registration"
+                                class="link"
+                            >
                                 <div
-                                    class="menu-item d-flex justify-content-between align-items-center"
+                                    class="menu-item d-flex align-items-center"
                                 >
-                                    <div class="d-flex align-items-center">
-                                        <i
-                                            class="icon-text fa-solid fa-circle-minus"
-                                        ></i>
-                                        <div class="text">Egresos</div>
+                                    <i class="icon-text fa-solid fa-user"></i>
+                                    <div class="text">
+                                        Registro de provedores
                                     </div>
                                 </div>
                             </router-link>

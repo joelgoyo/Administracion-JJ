@@ -123,6 +123,18 @@ h2 {
         color: $text-color-blue;
     }
 }
+
+.content-grafics {
+    padding: 24px;
+    background-color: $content-bg;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    p {
+        margin-bottom: 0px;
+        color: $text-color-blue;
+    }
+}
+
 .content-stadisticts {
     margin-bottom: 24px;
     justify-content: space-between;

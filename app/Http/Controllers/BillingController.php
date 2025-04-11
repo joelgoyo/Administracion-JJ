@@ -64,13 +64,21 @@ class BillingController extends Controller
         }
     }
 
-    public function listInvoice(){ {
+    public function listInvoice(){
         $ProductInvoice = ProductInvoice::with('product','bill.client')->get();
         return response()->json([
             'status' => 200,
             'ProductBilling' => $ProductInvoice,
         ]);
     }
-}
+
+    public function delete($id){
+        $billing = Bill::find($id);
+        $billing->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'Operación realizada correctamente',
+        ]);
+    }
 }
 
