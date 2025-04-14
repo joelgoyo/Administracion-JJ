@@ -57,6 +57,12 @@ Route::group(["middleware" => "auth"], function () {
     Route::get('/sales', function () {
         return view('welcome');
     });
+    Route::get('/all-users', function () {
+        return view('welcome');
+    });
+    Route::get('/user-view/{id}', function () {
+        return view('welcome');
+    });
 });
 
 

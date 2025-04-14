@@ -10,8 +10,45 @@ use App\Models\ProductInvoice;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
-class BillingController extends Controller
-{
+
+class BillingController extends Controller {
+    public function index(Request $request){
+    $billId = $request->query('bill_id');
+
+    if (!$billId) {
+        $billProducts = ProductInvoice::with(['bill', 'product'])->get();
+        return response()->json([
+            'ProductBilling' => $billProducts
+        ]);
+    }
+
+    $billProducts = ProductInvoice::with(['product'])
+        ->where('bill_id', $billId)
+        ->get();
+
+    if ($billProducts->isEmpty()) {
+        return response()->json([
+            'bill_id' => $billId,
+            'products' => []
+        ], 404);
+    }
+
+    // Aquí mapeamos los datos deseados
+    $products = $billProducts->map(function ($bp) {
+        return [
+            'id' => $bp->product->id,
+            'code' => $bp->product->code,
+            'name' => $bp->product->name,
+            'description' => $bp->product->description,
+            'price_unit' => $bp->product->priceUnit,
+        ];
+    });
+
+    return response()->json([
+        'bill_id' => $billId,
+        'products' => $products
+    ]); 
+}
     public function list(){     
         $billing = Bill::with('client')->get();
         return response()->json([

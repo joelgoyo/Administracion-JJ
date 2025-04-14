@@ -120,6 +120,13 @@
                             </router-link>
                         </div>
                     </div>
+
+                    <router-link to="/all-users" class="link">
+                        <div class="menu-item d-flex align-items-center">
+                            <i class="icon-text fa-solid fa-user"></i>
+                            <div class="text">Todos los usuarios</div>
+                        </div>
+                    </router-link>
                 </div>
             </nav>
         </div>

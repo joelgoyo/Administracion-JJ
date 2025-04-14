@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Products;
 
 class Bill extends Model
 {
@@ -33,4 +34,10 @@ class Bill extends Model
     {
         return $this->hasMany(ProductInvoice::class);
     }
+
+    public function products()
+    {
+        return $this->belongsToMany(products::class, 'product_invoices', 'bill_id', 'product_id')
+                ->withTimestamps();
+ }
 }

@@ -31,6 +31,7 @@ Route::prefix('clients')->group(function (){
     Route::get('/check-email/{email}', [ClientController::class, 'checkEmail']);
     Route::get('/check-dni/{dni}', [ClientController::class, 'checkDni']);
     Route::post('/list-table', [ClientController::class, 'listTable']);
+    Route::get('/details', [ClientController::class, 'details']);
 });
 
 //PROVEEDORES
@@ -62,6 +63,7 @@ Route::prefix('billing')->group(function (){
     Route::get('/listInvoice', [BillingController::class, 'listInvoice']);
     Route::delete('/delete/{id}', [BillingController::class, 'delete']);
     Route::post('/updateStock', [BillingController::class, 'updateStock']);
+    Route::post('/billingProducts', [BillingController::class, 'index']);
 });
 
 

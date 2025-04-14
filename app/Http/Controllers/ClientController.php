@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Client;
+use App\Models\Bill;
 
 class ClientController extends Controller
 {
@@ -45,6 +46,7 @@ class ClientController extends Controller
             'message' => 'Cliente eliminado correctamente',
         ]);
     }
+
     public function update(Request $request, $id){
         $client = Client::find($id);
         $client->name = $request->name;
@@ -59,6 +61,7 @@ class ClientController extends Controller
             'message' => 'Cliente actualizado correctamente',
         ]);
     }
+
     public function checkEmail($email){
         $client = Client::where('email', $email)->exists();
         if ($client) {
@@ -73,6 +76,7 @@ class ClientController extends Controller
             ]);
         }
     }
+
     public function checkDni($dni){
         $client = Client::where('dni', $dni)->exists();
         if ($client) {
@@ -87,4 +91,33 @@ class ClientController extends Controller
             ]);
         }
     }
+
+    public function details(Request $request){
+
+    $clientId = $request->query('id');
+
+    if (!$clientId) {
+        return response()->json([
+            'message' => 'El parámetro id es requerido.'
+        ], 400);
+    }
+
+    $client = Client::find($clientId);
+
+    if (!$client) {
+        return response()->json([
+            'message' => 'Cliente no encontrado.'
+        ], 404);
+    }
+
+    $bills = Bill::with('products') // Asegurate que exista la relación products()
+        ->where('client_id', $clientId)
+        ->get();
+
+    return response()->json([
+        'client' => $client,
+        'client_bills' => $bills
+    ]);
+}
+        
 }

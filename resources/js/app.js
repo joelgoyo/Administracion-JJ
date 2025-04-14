@@ -16,6 +16,8 @@ import IncomeComponent from './components/IncomeComponent.vue';
 import ExpensesComponent from './components/ExpensesComponent.vue';
 import SalesComponent from './components/SalesComponent.vue';
 import LoadingComponent from './components/LoadingComponent.vue';
+import allUsersView from './components/views/allUsers/allUsersView.vue';
+import UserView from './components/views/allUsers/userView.vue';
 
 // Definir las rutas
 const routes = [
@@ -29,6 +31,8 @@ const routes = [
     { path: '/income', component: IncomeComponent},
     { path: '/expenses', component: ExpensesComponent},
     { path: '/sales', component: SalesComponent},
+    { path: '/all-users', component: allUsersView},
+    { path: "/user-view/:id", component: UserView },
 ];
 
 // Crear la instancia del enrutador
@@ -51,6 +55,8 @@ app.component('income-component', IncomeComponent);
 app.component('expenses-component', ExpensesComponent);
 app.component('loading-component', LoadingComponent);
 app.component('sales-component', SalesComponent);
+app.component('all-users-view', allUsersView);
+app.component('users-view', UserView);
 
 // Usar el enrutador en la aplicación Vue
 app.use(router);

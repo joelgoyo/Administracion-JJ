@@ -6,20 +6,6 @@
             <div>
                 <h2>Facturación</h2>
                 <p>Factura electronica y impresion</p>
-
-                <div class="d-flex">
-                    <div class="dolar-bcv mr-2 dolars-price">
-                        Dolar BCV: {{ dolarBcv.price }}Bs
-                    </div>
-
-                    <div class="dolar-promedio dolars-price mr-2">
-                        Dolar Promedio: {{ dolarPromedio }}Bs
-                    </div>
-
-                    <div class="dolar-paralelo dolars-price">
-                        Dolar Paralelo: {{ dolarParalelo.price }}Bs
-                    </div>
-                </div>
             </div>
 
             <div class="client-info">
@@ -236,18 +222,26 @@
                         </option>
                     </select>
 
-                    <select class="form-control">
-                        <option value="" class="option-default">
-                            Seleccione una tasa
+                    <select class="form-control" v-model="selectedRate">
+                        <option value="" disabled>Seleccione una tasa</option>
+                        <option value="promedio">
+                            Promedio - 1$ = {{ dolarPromedio.toFixed(2) }}Bs
                         </option>
-                        <option value="1">
-                            Promedio - 1$ = {{ dolarPromedio }}Bs
-                        </option>
-                        <option value="2">
-                            BCV - 1$ = {{ dolarBcv.price }}$
+                        <option value="bcv">
+                            BCV - 1$ = {{ dolarBcv.price.toFixed(2) }}Bs
                         </option>
                     </select>
                 </div>
+            </div>
+
+            <div class="d-flex align-items-center input-check">
+                <input
+                    type="checkbox"
+                    v-model="applyIva"
+                    name="Agregar Iva 16%"
+                    id="ivaCheckbox"
+                />
+                <label for="ivaCheckbox">Agregar IVA 16%</label>
             </div>
         </div>
 
@@ -319,15 +313,31 @@
 
                 <div class="total d-flex align-items-end">
                     <h4>
-                        Dolar promedio:
+                        Total:
                         <strong class="text-success"
                             >{{ calculateTotal }}$</strong
+                        >
+                    </h4>
+                    <h4 v-if="applyIva">
+                        IVA (16%):
+                        <strong class="text-success"
+                            >{{ calculateIva.toFixed(2) }}$</strong
+                        >
+                    </h4>
+                    <h4 v-if="applyIva">
+                        Total + IVA:
+                        <strong class="text-success"
+                            >{{ calculateTotalWithIva }}$</strong
                         >
                     </h4>
                     <h4>
                         Precio Total:
                         <strong class="text-success"
-                            >{{ calculateTotal * dolarPromedio }}Bs</strong
+                            >{{
+                                (
+                                    calculateTotalWithIva * selectedDolarRate
+                                ).toFixed(2)
+                            }}Bs</strong
                         >
                     </h4>
                 </div>
@@ -336,7 +346,7 @@
 
         <div class="d-flex justify-content-end">
             <button class="btn btn-primary mr-2" @click="saveBilling">
-                FACTURAR Y ENVIAR AL CORREO (Simulado en Consola)
+                FACTURAR Y ENVIAR AL CORREO
             </button>
             <button class="btn btn-primary">IMPRIMIR FACTURA</button>
         </div>
@@ -444,6 +454,8 @@ import JsBarcode from "jsbarcode";
 export default {
     data() {
         return {
+            selectedRate: "bcv",
+            applyIva: false,
             fechaFormateada: "",
             isLoading: true,
             data: null,
@@ -458,9 +470,9 @@ export default {
             showProductModal: false,
             productFilter: "",
             selectedProducts: [],
-            dolarBcv: "",
+            dolarBcv: { price: 0 },
             dolarParalelo: "",
-            dolarPromedio: "",
+            dolarPromedio: 0, // Initialize as a number
             billing: {
                 client_id: null,
                 PlaceIssue: "",
@@ -493,9 +505,8 @@ export default {
             .then((response) => {
                 this.dolarBcv = response.data.monitors.bcv;
                 this.dolarParalelo = response.data.monitors.enparalelovzla;
-
-                const suma = this.dolarBcv.price + this.dolarParalelo.price;
-                this.dolarPromedio = suma / 2;
+                this.dolarPromedio =
+                    (this.dolarBcv.price + this.dolarParalelo.price) / 2;
             });
         this.clientsDate();
         this.productsList();
@@ -518,6 +529,17 @@ export default {
                 (total, item) => total + item.product.priceUnit * item.quantity,
                 0
             );
+        },
+        calculateIva() {
+            return this.applyIva ? this.calculateTotal * 0.16 : 0;
+        },
+        calculateTotalWithIva() {
+            return this.calculateTotal + this.calculateIva;
+        },
+        selectedDolarRate() {
+            return this.selectedRate === "bcv"
+                ? this.dolarBcv.price
+                : this.dolarPromedio;
         },
     },
 
@@ -556,33 +578,32 @@ export default {
             let y = marginTop;
             let startCompanyInfoY = y;
             const halfPageWidth = pageWidth / 2;
-            const tableWidthPercentage = 0.45; // 45% de ancho para cada tabla
+            const tableWidthPercentage = 0.45;
             const tableWidth = pageWidth * tableWidthPercentage;
-            const spacing = 10; // Espacio entre las tablas
+            const spacing = 10;
 
             // Datos de la empresa
             const companyName = "RADIADORES MARACAY JPC, C.A.";
-            const companyRif = "J-00000000-0"; // Reemplaza con el RIF real
+            const companyRif = "J-00000000-0";
             const companyAddress =
-                "Av. Principal, Zona Industrial, Maracay, Edo. Aragua"; // Reemplaza con la dirección real
-            const companyPhone = "+58 123-4567890"; // Reemplaza con el teléfono real
-            const instagramQRPath = "/img/radiadores-maracay-qr.png"; // Reemplaza con la ruta real de tu QR
+                "Av. Principal, Zona Industrial, Maracay, Edo. Aragua";
+            const companyPhone = "+58 123-4567890";
+            const instagramQRPath = "/img/radiadores-maracay-qr.png";
 
             // Dimensiones del logo
             const logoWidth = 40;
             const logoHeight = 30;
-            const logoX = margin; // Colocar el logo a la izquierda
+            const logoX = margin;
 
             // Dimensiones del QR
             const qrWidth = 30;
             const qrHeight = 30;
-            const qrX = pageWidth - margin - qrWidth; // Colocar el QR en la esquina superior derecha
+            const qrX = pageWidth - margin - qrWidth;
 
-            // Posición inicial para el texto de la empresa (ajustar según el logo)
+            // Posición inicial para el texto de la empresa
             let companyInfoX = margin + logoWidth + 10;
 
             // Función para añadir texto alineado a la izquierda
-
             const addLeftText = (text, x, currentY, style = {}) => {
                 pdf.setFontSize(style.fontSize || 10);
                 pdf.setFont(
@@ -590,11 +611,10 @@ export default {
                     style.fontStyle || "normal"
                 );
 
-                // Aquí es donde se aplica el color correctamente
                 if (style.textColor) {
-                    pdf.setTextColor(...style.textColor); // <-- importante
+                    pdf.setTextColor(...style.textColor);
                 } else {
-                    pdf.setTextColor(0, 0, 0); // Color por defecto (negro)
+                    pdf.setTextColor(0, 0, 0);
                 }
 
                 pdf.text(text, x, currentY);
@@ -660,9 +680,9 @@ export default {
                 console.error("Error al cargar el QR de Instagram:", error);
             }
 
-            y += 15; // Espacio después de la información de la empresa
+            y += 15;
 
-            // Tabla de Información del Cliente (Izquierda)
+            // Tabla de Información del Cliente
             pdf.setFontSize(12);
             pdf.setFont("helvetica", "bold");
 
@@ -674,57 +694,13 @@ export default {
             ];
 
             autoTable(pdf, {
-                body: customerInfo.map((row) => ({
-                    ...row,
-                    columnStyles: { 0: { fontStyle: "bold" } },
-                })),
+                body: customerInfo,
                 columns: [
                     { header: "Información del Cliente", dataKey: "0" },
                     { header: "Detalle", dataKey: "1" },
                 ],
                 startY: y,
-                startX: pageWidth / 2 + spacing, // Iniciar en la mitad derecha
-                tableLineWidth: 0.2,
-                tableLineColor: [0, 0, 0],
-                fillColor: [128, 0, 32],
-                columnStyles: {
-                    0: {
-                        fontStyle: "bold",
-                        fillColor: [240, 240, 240],
-                        halign: "left",
-                    }, // Alinear la primera columna a la derecha
-                    1: { halign: "left" }, // Alinear la segunda columna a la derecha
-                },
-                bodyStyles: { halign: "left" }, // Alinear el contenido del cuerpo a la derecha
-                headStyles: {
-                    fillColor: [128, 0, 32], // Color vinotinto
-                    textColor: [255, 255, 255], // Texto blanco
-                    fontStyle: "bold",
-                },
-                tableWidth: 86,
-                margin: { left: halfPageWidth + spacing / 2 }, // Margen izquierdo para separar
-            });
-            // Tabla de Información de la Factura (Derecha)
-            pdf.setFontSize(12);
-            pdf.setFont("helvetica", "bold");
-            const invoiceInfo = [
-                [`Orden #:`, this.billing.order],
-                [`Fecha:`, this.formatDate(this.billing.created_at)],
-                [`Lugar de Emisión:`, this.billing.PlaceIssue],
-                [`Tipo de Pago:`, this.billing.typePayment],
-            ];
-
-            autoTable(pdf, {
-                body: invoiceInfo.map((row) => ({
-                    ...row,
-                    columnStyles: { 0: { fontStyle: "bold" } },
-                })),
-                columns: [
-                    { header: "Información de la Factura", dataKey: "0" },
-                    { header: "Detalle", dataKey: "1" },
-                ],
-                startY: y, // Misma altura que la tabla del cliente
-                startX: halfPageWidth + spacing, // Iniciar después de la primera tabla y el espacio
+                startX: pageWidth / 2 + spacing,
                 tableLineWidth: 0.2,
                 tableLineColor: [0, 0, 0],
                 columnStyles: {
@@ -737,33 +713,76 @@ export default {
                 },
                 bodyStyles: { halign: "left" },
                 headStyles: {
-                    fillColor: [128, 0, 32], // Color vinotinto
-                    textColor: [255, 255, 255], // Texto blanco
+                    fillColor: [128, 0, 32],
+                    textColor: [255, 255, 255],
+                    fontStyle: "bold",
+                },
+                tableWidth: 86,
+                margin: { left: halfPageWidth + spacing / 2 },
+            });
+
+            // Tabla de Información de la Factura
+            const invoiceInfo = [
+                [`Orden #:`, this.billing.order],
+                [`Fecha:`, this.formatDate(this.billing.created_at)],
+                [`Lugar de Emisión:`, this.billing.PlaceIssue],
+                [`Tipo de Pago:`, this.billing.typePayment],
+            ];
+
+            autoTable(pdf, {
+                body: invoiceInfo,
+                columns: [
+                    { header: "Información de la Factura", dataKey: "0" },
+                    { header: "Detalle", dataKey: "1" },
+                ],
+                startY: y,
+                startX: halfPageWidth + spacing,
+                tableLineWidth: 0.2,
+                tableLineColor: [0, 0, 0],
+                columnStyles: {
+                    0: {
+                        fontStyle: "bold",
+                        fillColor: [240, 240, 240],
+                        halign: "left",
+                    },
+                    1: { halign: "left" },
+                },
+                bodyStyles: { halign: "left" },
+                headStyles: {
+                    fillColor: [128, 0, 32],
+                    textColor: [255, 255, 255],
                     fontStyle: "bold",
                 },
                 tableWidth: tableWidth,
             });
 
-            y = pdf.lastAutoTable.finalY + 10; // Actualizar y después de la segunda tabla
+            y = pdf.lastAutoTable.finalY + 10;
             pdf.setFontSize(12);
             pdf.setFont("helvetica", "bold");
             y += lineHeight + 2;
 
+            // Tabla de productos en Bs
             const head = [
                 [
                     "Cantidad",
-                    "Concepto o descripcion",
+                    "Concepto o descripción",
                     "Código",
-                    "Precio Unitario ($)",
-                    "Monto Total ($)",
+                    "Precio Unitario (Bs)",
+                    "Monto Total (Bs)",
                 ],
             ];
             const body = this.selectedProducts.map((item) => [
                 item.quantity,
                 item.product.name,
                 item.product.code,
-                Number(item.product.priceUnit).toFixed(2),
-                (Number(item.product.priceUnit) * item.quantity).toFixed(2),
+                (
+                    Number(item.product.priceUnit) * this.selectedDolarRate
+                ).toFixed(2),
+                (
+                    Number(item.product.priceUnit) *
+                    item.quantity *
+                    this.selectedDolarRate
+                ).toFixed(2),
             ]);
 
             autoTable(pdf, {
@@ -774,8 +793,8 @@ export default {
                 tableLineWidth: 0.2,
                 tableLineColor: [0, 0, 0],
                 headStyles: {
-                    fillColor: [128, 0, 32], // Color vinotinto
-                    textColor: [255, 255, 255], // Texto blanco
+                    fillColor: [128, 0, 32],
+                    textColor: [255, 255, 255],
                     fontStyle: "bold",
                 },
                 columnStyles: { 4: { halign: "right" } },
@@ -786,47 +805,58 @@ export default {
 
             y += 5;
 
-            // Totales
+            // Totales en Bs
             pdf.setFontSize(24);
             pdf.setFont("helvetica", "bold");
-            const totalsX = pageWidth - margin - 34; // Ajustar el valor para dejar espacio para los bordes
+            const totalsX = pageWidth - margin - 38;
             const totalsYStart = y;
-            const totalsWidth = 28; // Ancho del bloque de totales
-            const totalsHeight = 4 * 2 + 7; // Altura del bloque de totales (2 líneas + espacio para bordes)
+            const totalsWidth = 28;
+            const totalsHeight = this.applyIva ? 6 * 2 + 7 : 4 * 2 + 7;
 
             pdf.rect(
-                totalsX - 7,
+                totalsX - 3,
                 totalsYStart - 6,
                 totalsWidth + 14,
                 totalsHeight,
                 "D"
-            ); // Dibujar el rectángulo alrededor de los totales
+            );
 
-            addLeftText(
-                `Subtotal: ${this.calculateTotal.toFixed(2)}$`,
-                totalsX,
-                y,
-                {
+            const subtotalBs = (
+                this.calculateTotal * this.selectedDolarRate
+            ).toFixed(2);
+            const ivaBs = (this.calculateIva * this.selectedDolarRate).toFixed(
+                2
+            );
+            const totalBs = (
+                this.calculateTotalWithIva * this.selectedDolarRate
+            ).toFixed(2);
+
+            addLeftText(`Subtotal: ${subtotalBs}`, totalsX, y, {
+                font: "helvetica",
+                fontWeight: "bold",
+                fontSize: 12,
+                margin: { bottom: 5 },
+            });
+            y += lineHeight;
+
+            if (this.applyIva) {
+                addLeftText(`IVA (16%): ${ivaBs}`, totalsX, y, {
                     font: "helvetica",
                     fontWeight: "bold",
                     fontSize: 12,
                     margin: { bottom: 5 },
-                }
-            );
-            y += lineHeight;
-            addLeftText(
-                `Total: ${(this.calculateTotal * this.dolarPromedio).toFixed(
-                    2
-                )}Bs`,
-                totalsX,
-                y,
-                {
-                    font: "helvetica",
-                    fontWeight: "bold",
-                    fontSize: 12,
-                }
-            );
+                });
+                y += lineHeight;
+            }
 
+            addLeftText(`Total: ${totalBs}`, totalsX, y, {
+                font: "helvetica",
+                fontWeight: "bold",
+                fontSize: 12,
+            });
+            y += lineHeight;
+
+            // Código de barras
             const barcodeValue = this.billing.order || "000000";
             const canvas = document.createElement("canvas");
 
@@ -862,7 +892,8 @@ export default {
                 !this.client_id ||
                 !this.billing.PlaceIssue ||
                 !this.billing.typePayment ||
-                !this.billing.bank
+                !this.billing.bank ||
+                !this.selectedRate
             ) {
                 let message = "";
                 if (this.selectedProducts.length === 0 && !this.client_id) {
@@ -891,14 +922,16 @@ export default {
             }
 
             this.billing.client_id = this.client_id || null;
-            this.billing.amount = this.calculateTotal;
-            this.billing.amount_bs = this.billing.amount * this.dolarPromedio;
+            this.billing.amount = this.calculateTotalWithIva;
+            this.billing.amount_bs =
+                this.billing.amount * this.selectedDolarRate;
 
             this.generateOrderNumber();
 
             axios
                 .post("/api/billing/save", {
                     ...this.billing,
+                    iva: this.calculateIva, // Optionally save IVA separately if needed
                 })
                 .then((response) => {
                     this.newlyCreatedBillingId = response.data.billing.id;
@@ -1018,6 +1051,7 @@ export default {
             this.selectedProducts = [];
             this.newlyCreatedBillingId = null;
             this.billingProducts = [];
+            this.selectedRate = "bcv";
         },
 
         removeProduct(index) {
@@ -1125,6 +1159,10 @@ export default {
 }
 .input-order input {
     padding: 0px !important;
+}
+.input-check label {
+    margin-bottom: 1px;
+    margin-left: 6px;
 }
 .dolars-price {
     margin-top: 12px;
