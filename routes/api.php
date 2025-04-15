@@ -19,9 +19,8 @@ use App\Http\Controllers\BillingController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'index']);
+
 //CLIENTES 
 Route::prefix('clients')->group(function (){
     Route::post('/save', [ClientController::class, 'save']);

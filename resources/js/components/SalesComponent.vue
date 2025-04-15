@@ -22,6 +22,7 @@
 
         <!-- FILTROS Y TABLA DE FACTURAS -->
         <div class="table-container">
+            <h2>Ultimas facturas</h2>
             <div class="d-flex justify-content-between align-items-end">
                 <div class="filters">
                     <label for="">Filtros de búsqueda</label>
@@ -41,8 +42,8 @@
                         <input
                             type="text"
                             class="form-control"
-                            placeholder="Correo electrónico"
-                            v-model="filters.email"
+                            placeholder="Nro de orden"
+                            v-model="filters.order"
                         />
                     </div>
                 </div>
@@ -65,10 +66,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(bill, index) in bills" :key="index">
+                        <tr v-for="(bill, index) in paginatedBills">
                             <td>
-                                <strong>{{ index + 1 }}</strong>
+                                <strong>{{
+                                    (currentPage - 1) * pageSize + index + 1
+                                }}</strong>
                             </td>
+
                             <td>
                                 <strong
                                     >{{ bill.client?.name || "N/A" }}
@@ -115,6 +119,27 @@
                     </tbody>
                 </table>
             </div>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <span class="mr-2"
+                    >Página {{ currentPage }} de {{ totalPages }}</span
+                >
+                <div>
+                    <button
+                        class="btn btn-sm btn-primary me-2 mr-2"
+                        :disabled="currentPage === 1"
+                        @click="currentPage--"
+                    >
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button
+                        class="btn btn-sm btn-primary ms-2 mr-2"
+                        :disabled="currentPage === totalPages"
+                        @click="currentPage++"
+                    >
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -155,10 +180,13 @@ export default {
             bills: [],
             allBills: [],
             selectedWeek: "all",
+            currentPage: 1,
+            pageSize: 10,
             filters: {
                 dni: "",
                 name: "",
                 email: "",
+                order: "",
             },
             chartData: {
                 labels: [],
@@ -198,9 +226,49 @@ export default {
             },
         };
     },
+    computed: {
+        filteredBills() {
+            return this.bills.filter((bill) => {
+                const dniMatch = bill.client?.dni
+                    ?.toLowerCase()
+                    .includes(this.filters.dni.toLowerCase());
+
+                const nameMatch = (
+                    (bill.client?.name || "") +
+                    " " +
+                    (bill.client?.last_name || "")
+                )
+                    .toLowerCase()
+                    .includes(this.filters.name.toLowerCase());
+
+                const orderMatch = (bill.order || "")
+                    .toLowerCase()
+                    .includes(this.filters.order?.toLowerCase() || "");
+
+                return dniMatch && nameMatch && orderMatch;
+            });
+        },
+        paginatedBills() {
+            const start = (this.currentPage - 1) * this.pageSize;
+            const end = start + this.pageSize;
+            return this.filteredBills.slice(start, end);
+        },
+        totalPages() {
+            return Math.ceil(this.filteredBills.length / this.pageSize);
+        },
+    },
+    watch: {
+        filters: {
+            deep: true,
+            handler() {
+                this.currentPage = 1;
+            },
+        },
+    },
     mounted() {
         this.fetchBills();
     },
+
     methods: {
         formatDateWithTime(dateString) {
             if (!dateString) return "";

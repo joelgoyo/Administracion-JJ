@@ -43,4 +43,7 @@
     }
     }
 </style>
+<script>
+    window.user = @json(Auth::user());
+</script>
  

@@ -136,7 +136,9 @@
         <div class="table-container">
             <h3 class="mb-3">
                 Productos registrados:
-                <strong class="text-success">{{ countProducts.products }}</strong>
+                <strong class="text-success">{{
+                    countProducts.products
+                }}</strong>
             </h3>
             <div class="d-flex justify-content-between align-items-end">
                 <div class="filters">
@@ -329,22 +331,22 @@
                 <div class="inputs">
                     <div class="w-100">
                         <label for="">Precio de venta</label>
-                    <input
-                        type="number"
-                        placeholder="Precio de venta"
-                        class="form-control"
-                        v-model="editModal.products.priceUnit"
-                    />
-                </div>
-                <div class="w-100">
-                    <label for="">Descripcion</label>
-                    <input
-                        type="text"
-                        placeholder="Descripcion"
-                        class="form-control"
-                        v-model="editModal.products.description"
-                    />
-                </div>
+                        <input
+                            type="number"
+                            placeholder="Precio de venta"
+                            class="form-control"
+                            v-model="editModal.products.priceUnit"
+                        />
+                    </div>
+                    <div class="w-100">
+                        <label for="">Descripcion</label>
+                        <input
+                            type="text"
+                            placeholder="Descripcion"
+                            class="form-control"
+                            v-model="editModal.products.description"
+                        />
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary mr-2">
                     Actualizar
@@ -401,7 +403,7 @@ export default {
             editModal: { show: false, client: {} },
             filters: {
                 code: "",
-                name: "", 
+                name: "",
             },
         };
     },
@@ -415,7 +417,9 @@ export default {
                     product.code.toString().includes(this.filters.code);
                 const nameMatch =
                     !this.filters.name ||
-                    product.name.toLowerCase().includes(this.filters.name.toLowerCase()); // Asegúrate de que solo comparas el nombre de la empresa.
+                    product.name
+                        .toLowerCase()
+                        .includes(this.filters.name.toLowerCase()); // Asegúrate de que solo comparas el nombre de la empresa.
                 return codeMatch && nameMatch;
             });
             return filtered.slice();
@@ -428,7 +432,6 @@ export default {
         this.fechCountProducts();
     },
     methods: {
-
         formatDate(dateString) {
             if (!dateString) return "";
             const date = new Date(dateString);

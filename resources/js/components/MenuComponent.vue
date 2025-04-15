@@ -30,7 +30,7 @@
                         alt="Foto de usuario"
                     />
                     <div class="content-user">
-                        <h3>Administrador</h3>
+                        <h3>{{ user.name }}</h3>
                         <p>{{ fechaFormateada }}</p>
                     </div>
                 </div>
@@ -56,13 +56,13 @@
                             <div class="text">Facturacion</div>
                         </div>
                     </router-link>
-                    <router-link to="/sales" class="link">
+                    <router-link to="/sales" class="link" v-if="user.id == 1">
                         <div class="menu-item d-flex align-items-center">
                             <i class="icon-text fa-solid fa-chart-simple"></i>
                             <div class="text">Ventas</div>
                         </div>
                     </router-link>
-                    <router-link to="/add-products" class="link">
+                    <router-link to="/add-products" class="link" v-if="user.id == 1">
                         <div
                             class="menu-item d-flex justify-content-between align-items-center"
                         >
@@ -108,6 +108,7 @@
                             <router-link
                                 to="/supplier-registration"
                                 class="link"
+                                v-if="user.id == 1"
                             >
                                 <div
                                     class="menu-item d-flex align-items-center"
@@ -121,7 +122,7 @@
                         </div>
                     </div>
 
-                    <router-link to="/all-users" class="link">
+                    <router-link to="/all-users" class="link" v-if="user.id == 1">
                         <div class="menu-item d-flex align-items-center">
                             <i class="icon-text fa-solid fa-user"></i>
                             <div class="text">Todos los usuarios</div>
@@ -150,6 +151,7 @@ import { ref } from "vue";
 const change = ref(true);
 const changeTwo = ref(true);
 const colapse = ref(true);
+const user = window.user;
 
 const arrowToggle = () => {
     change.value = !change.value;
@@ -176,12 +178,7 @@ export default {
         setInterval(() => {
             this.formatearFechaHora();
         }, 1000);
-
-        axios.get("/api/users").then((response) => {
-            if (response.data.data && response.data.data.length > 0) {
-                this.userName = response.data.data[0].name; // Obtén el nombre del primer usuario
-            }
-        });
+        
     },
     methods: {
         formatearFechaHora() {

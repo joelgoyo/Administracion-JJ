@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('PlaceIssue')->nullable();
             $table->string('order')->nullable();
             $table->string('bill_order')->nullable();
-            $table->date('date');
-            $table->enum('typeDelivery', ['home', 'p2p', 'other']);
-            $table->enum('typePayment', ['cash', 'creditCard', 'debitCard', 'transfer', 'payMovil']);
+            $table->date('date')>nullable();
+            $table->string('typeDelivery');
+            $table->string('typePayment');
             $table->string('bank')->nullable();
             $table->string('deliveryNote')->nullable();
             $table->date('deliveryDate')->nullable();
