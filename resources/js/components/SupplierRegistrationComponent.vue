@@ -1,12 +1,9 @@
 <template>
-    <!-- HEADER -->
     <div class="container-content">
         <div class="content-title">
             <h2>Agregar nuevo Proveedor</h2>
             <p>Registrar nuevo Proveedor</p>
         </div>
-
-        <!-- CLIENTES Y REGISTROS DE CLIENTES -->
 
         <div class="data-clients">
             <div class="inputs-content">
@@ -17,7 +14,7 @@
                                 type="text"
                                 placeholder="Nombre de la empresa"
                                 class="form-control"
-                                v-model="suppliers.name"
+                                v-model="supplier.name"
                             />
                             <p v-if="errors.name" class="text-danger">
                                 {{ errors.name }}
@@ -25,10 +22,10 @@
                         </div>
                         <div class="input">
                             <input
-                                type="number"
+                                type="text"
                                 placeholder="RIF"
                                 class="form-control"
-                                v-model="suppliers.dni"
+                                v-model="supplier.dni"
                             />
                             <p v-if="errors.dni" class="text-danger">
                                 {{ errors.dni }}
@@ -39,9 +36,9 @@
                         <div class="input">
                             <input
                                 type="text"
-                                placeholder="Correo electronico"
+                                placeholder="Correo electrónico"
                                 class="form-control"
-                                v-model="suppliers.email"
+                                v-model="supplier.email"
                             />
                             <p v-if="errors.email" class="text-danger">
                                 {{ errors.email }}
@@ -49,10 +46,10 @@
                         </div>
                         <div class="input">
                             <input
-                                type="number"
-                                placeholder="Numero de telefono"
+                                type="text"
+                                placeholder="Número de teléfono"
                                 class="form-control"
-                                v-model="suppliers.phone"
+                                v-model="supplier.phone"
                             />
                             <p v-if="errors.phone" class="text-danger">
                                 {{ errors.phone }}
@@ -60,34 +57,33 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-floppy-disk"></i> GUARDAR NUEVO
-                        PROVEEDOR
+                        <i class="fa-solid fa-floppy-disk"></i> GUARDAR NUEVO PROVEEDOR
                     </button>
                 </form>
             </div>
         </div>
 
-        <div class="table-container">
+        <div class="table-container" v-if="!isLoading">
             <div class="d-flex justify-content-between align-items-end">
                 <div class="filters">
-                    <label for="">Filtros de busqueda</label>
+                    <label for="">Filtros de búsqueda</label>
                     <div class="inputs">
                         <input
                             type="text"
                             class="form-control"
-                            placeholder="RIF/C.I"
+                            placeholder="RIF"
                             v-model="filters.dni"
                         />
                         <input
                             type="text"
                             class="form-control"
-                            placeholder="Nombre y apellido"
+                            placeholder="Nombre de empresa"
                             v-model="filters.name"
                         />
                         <input
                             type="text"
                             class="form-control"
-                            placeholder="Correo electronico"
+                            placeholder="Correo electrónico"
                             v-model="filters.email"
                         />
                     </div>
@@ -99,121 +95,146 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Nombre de empresa</th>
-                            <th scope="col">RIF/C.I</th>
+                            <th scope="col">RIF</th>
                             <th scope="col">Correo</th>
-                            <th scope="col">Numero de telefono</th>
+                            <th scope="col">Número de teléfono</th>
                             <th scope="col">Editar</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
-                            v-for="(client, index) in filteredClients"
-                            :key="index.id"
+                            v-for="(supplier, index) in paginatedSuppliers"
+                            :key="supplier.id"
                         >
                             <td>
-                                <strong> {{ index + 1 }} </strong>
+                                <strong>{{ (currentPage - 1) * pageSize + index + 1 }}</strong>
                             </td>
                             <td>
-                                <strong
-                                    >{{ client.name }}
-                                    {{ client.last_name }}</strong
-                                >
+                                <strong>{{ supplier.name }}</strong>
                             </td>
                             <td>
-                                <strong>{{ client.dni }}</strong>
+                                <strong>{{ supplier.dni }}</strong>
                             </td>
                             <td>
-                                <strong>{{ client.email }}</strong>
+                                <strong>{{ supplier.email }}</strong>
                             </td>
                             <td>
-                                <strong>{{ client.phone }}</strong>
+                                <strong>{{ supplier.phone }}</strong>
                             </td>
                             <td>
                                 <i
                                     title="Editar"
                                     class="fa-solid fa-pen-to-square mr-2"
-                                    @click="openEditModal(client)"
+                                    @click="openEditModal(supplier)"
                                 ></i>
                                 <i
                                     title="Eliminar"
                                     class="fa-solid fa-trash"
-                                    @click="deleteClient(client.id)"
+                                    @click="deleteSupplier(supplier.id)"
                                 ></i>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-
-    <div v-if="editModal.show" class="modal-x">
-        <div class="modal-y">
-            <div class="content-title">
-                <h2>Editar datos del cliente</h2>
-                <p>Editar</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <span class="mr-2">Página {{ currentPage }} de {{ totalPages }}</span>
+                <div>
+                    <button
+                        class="btn btn-sm btn-primary me-2 mr-2"
+                        :disabled="currentPage === 1"
+                        @click="currentPage--"
+                    >
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button
+                        class="btn btn-sm btn-primary ms-2 mr-2"
+                        :disabled="currentPage === totalPages"
+                        @click="currentPage++"
+                    >
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
+        </div>
+        <div v-else>
+            <p>Cargando datos...</p>
+        </div>
 
-            <form action="" @submit.prevent="updateClient">
-                <div class="inputs">
-                    <input
-                        type="number"
-                        v-model="editModal.client.dni"
-                        placeholder="RIF/C.I"
-                        class="form-control mb-2"
-                    />
-                    <input
-                        type="text"
-                        v-model="editModal.client.name"
-                        placeholder="Nombre"
-                        class="form-control mb-2"
-                    />
+        <div v-if="editModal.show" class="modal-x">
+            <div class="modal-y">
+                <div class="content-title">
+                    <h2>Editar datos del proveedor</h2>
+                    <p>Editar</p>
                 </div>
-                <div class="inputs">
-                    <input
-                        type="text"
-                        v-model="editModal.client.email"
-                        placeholder="Correo electronico"
-                        class="form-control mb-2"
-                    />
-                    <input
-                        type="text"
-                        v-model="editModal.client.phone"
-                        placeholder="Numero de telefono"
-                        class="form-control mb-2"
-                    />
-                </div>
-                <button type="submit" class="btn btn-primary mr-2">
-                    Actualizar
-                </button>
-                <button
-                    type="button"
-                    class="btn btn-danger"
-                    @click="closeEditModal"
-                >
-                    Cancelar
-                </button>
-            </form>
+
+                <form action="" @submit.prevent="updateSupplier">
+                    <div class="inputs">
+                        <input
+                            type="text"
+                            v-model="editModal.supplier.name"
+                            placeholder="Nombre de empresa"
+                            class="form-control mb-2"
+                        />
+                        <input
+                            type="text"
+                            v-model="editModal.supplier.dni"
+                            placeholder="RIF"
+                            class="form-control mb-2"
+                        />
+                    </div>
+                    <div class="inputs">
+                        <input
+                            type="text"
+                            v-model="editModal.supplier.email"
+                            placeholder="Correo electrónico"
+                            class="form-control mb-2"
+                        />
+                        <input
+                            type="text"
+                            v-model="editModal.supplier.phone"
+                            placeholder="Número de teléfono"
+                            class="form-control mb-2"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary mr-2">
+                        Actualizar
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-danger"
+                        @click="closeEditModal"
+                    >
+                        Cancelar
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </template>
+
 <script>
-import LoadingComponent from "./LoadingComponent.vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import * as yup from "yup";
 
 const validationSchema = yup.object({
-    name: yup.string().required("Nombre es requerido."),
-    dni: yup.string().required("RIF/C.I es requerido."),
-    phone: yup.string().required("Número de teléfono es requerido."),
+    name: yup.string().required("El nombre de la empresa es requerido."),
+    dni: yup.string().required("El RIF es requerido."),
+    email: yup
+        .string()
+        .email("Correo electrónico no válido.")
+        .required("El correo electrónico es requerido."),
+    phone: yup.string().required("El número de teléfono es requerido."),
 });
+
 export default {
     data() {
         return {
-            isLoading: true,
-            data: null,
-            suppliers: {
+            currentPage: 1,
+            pageSize: 10,
+            isLoading: false,
+            supplier: {
                 name: "",
                 dni: "",
                 email: "",
@@ -225,76 +246,92 @@ export default {
                 name: "",
                 email: "",
             },
-            editModal: { show: false, client: {} },
-            form: {
-                name: "",
-                email: "",
-                password: "",
-            },
+            editModal: { show: false, supplier: {} },
             errors: {},
-            currentPage: 1,
-            perPage: 10,
-            totalClients: 0,
         };
     },
-    components: {
-        LoadingComponent,
-    },
-
     mounted() {
-        this.fetchClients();
+        this.fetchSuppliers();
     },
     computed: {
-        filteredClients() {
-            const filtered = this.suppliersList.filter((supplier) => {
-                const dniMatch =
-                    !this.filters.dni ||
-                    supplier.dni.toString().includes(this.filters.dni);
-                const nameMatch =
-                    !this.filters.name ||
-                    supplier.name
-                        .toLowerCase()
-                        .includes(this.filters.name.toLowerCase()); // Asegúrate de que solo comparas el nombre de la empresa.
-                const emailMatch =
-                    !this.filters.email ||
-                    supplier.email
-                        .toLowerCase()
-                        .includes(this.filters.email.toLowerCase());
+        filteredSuppliers() {
+            return this.suppliersList.filter((supplier) => {
+                const dniMatch = supplier.dni
+                    ?.toString()
+                    .toLowerCase()
+                    .includes(this.filters.dni.toLowerCase());
+                const nameMatch = supplier.name
+                    ?.toLowerCase()
+                    .includes(this.filters.name.toLowerCase());
+                const emailMatch = supplier.email
+                    ?.toLowerCase()
+                    .includes(this.filters.email.toLowerCase());
                 return dniMatch && nameMatch && emailMatch;
             });
-            return filtered.slice();
+        },
+        paginatedSuppliers() {
+            const start = (this.currentPage - 1) * this.pageSize;
+            const end = start + this.pageSize;
+            return this.filteredSuppliers.slice(start, end);
+        },
+        totalPages() {
+            return Math.ceil(this.filteredSuppliers.length / this.pageSize);
+        },
+    },
+    watch: {
+        filters: {
+            deep: true,
+            handler() {
+                this.currentPage = 1;
+            },
+        },
+        currentPage() {
+            if (this.currentPage < 1) this.currentPage = 1;
+            if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
         },
     },
     methods: {
-        openEditModal(client) {
-            this.editModal.client = { ...client };
+        async fetchSuppliers() {
+            this.isLoading = true;
+            try {
+                const response = await axios.get("/api/suppliers/list");
+                this.suppliersList = response.data.suppliers;
+            } catch (error) {
+                console.error("Error fetching suppliers:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "No se pudieron cargar los proveedores.",
+                });
+            } finally {
+                this.isLoading = false;
+            }
+        },
+        openEditModal(supplier) {
+            this.editModal.supplier = { ...supplier };
             this.editModal.show = true;
         },
-
         closeEditModal() {
             this.editModal.show = false;
         },
-
-        updateClient() {
-            axios.put(`/api/suppliers/update/${this.editModal.client.id}`, this.editModal.client).then(() => {
-                    Swal.fire(
-                        "Cliente actualizado correctamente",
-                        "",
-                        "success"
-                    );
-                    this.closeEditModal();
-                    this.fetchClients();
-                })
-                .catch(() => {
-                    Swal.fire(
-                        "Error al actualizar el cliente ya estos datos estan en uso",
-                        "",
-                        "error"
-                    );
-                });
+        async updateSupplier() {
+            try {
+                await axios.put(
+                    `/api/suppliers/update/${this.editModal.supplier.id}`,
+                    this.editModal.supplier
+                );
+                Swal.fire("Proveedor actualizado correctamente", "", "success");
+                this.closeEditModal();
+                await this.fetchSuppliers();
+            } catch (error) {
+                Swal.fire(
+                    "Error al actualizar el proveedor, estos datos ya están en uso",
+                    "",
+                    "error"
+                );
+            }
         },
-
-        deleteClient(id) {
+        deleteSupplier(id) {
             Swal.fire({
                 title: "¿Estás seguro?",
                 text: "No podrás revertir esto.",
@@ -307,95 +344,75 @@ export default {
                 if (result.isConfirmed) {
                     axios
                         .delete(`/api/suppliers/delete/${id}`)
-                        .then((response) => {
+                        .then(() => {
                             Swal.fire({
                                 title: "Eliminado correctamente",
                                 icon: "success",
                                 draggable: true,
                             });
-                            this.fetchClients();
+                            this.fetchSuppliers();
                         })
                         .catch((error) => {
-                            console.log(error);
+                            console.error(error);
                             Swal.fire({
                                 title: "Error",
-                                text: "No se pudo eliminar el usuario.",
+                                text: "No se pudo eliminar el proveedor.",
                                 icon: "error",
                             });
                         });
                 }
             });
         },
-
-        fetchClients() {
-            axios
-                .get(`/api/suppliers/list`)
-                .then((response) => {
-                    this.suppliersList = response.data.suppliers;
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-
-        pages() {
-            const pages = [];
-            for (let i = 1; i <= this.totalPages; i++) {
-                pages.push(i);
-            }
-            return pages;
-        },
-        
         async handleSubmit() {
             try {
-                await validationSchema.validate(this.suppliers, {
+                await validationSchema.validate(this.supplier, {
                     abortEarly: false,
                 });
-                this.errors = {}; // Limpiar errores
+                this.errors = {};
 
-                // Verificar si el correo electrónico ya existe
-                const emailResponse = await axios.get(`/api/suppliers/check-email/${this.suppliers.email}`);
+                const emailResponse = await axios.get(
+                    `/api/suppliers/check-email/${this.supplier.email}`
+                );
                 if (emailResponse.data.exists) {
                     this.errors.email = "Este correo electrónico ya está registrado.";
-                    return; // Detener el registro si el correo ya existe
+                    return;
                 }
 
-                // Verificar si el DNI ya existe
-                const NameResponse = await axios.get(`/api/suppliers/check-name/${this.suppliers.name}`);
-                if (NameResponse.data.exists) {
-                    this.errors.name = "Este nombre ya esta registrado.";
-                    return; // Detener el registro si el DNI ya existe
+                const nameResponse = await axios.get(
+                    `/api/suppliers/check-name/${this.supplier.name}`
+                );
+                if (nameResponse.data.exists) {
+                    this.errors.name = "Este nombre ya está registrado.";
+                    return;
                 }
-                // Si el correo y el DNI no existen, proceder con el registro
-                axios
-                    .post("/api/suppliers/save", this.suppliers)
-                    .then(() => {
-                        Swal.fire({
-                            title: "Exitoso",
-                            text: "Cliente registrado correctamente",
-                            icon: "success",
-                            confirmButtonText: "Aceptar",
-                        });
-                        this.fetchClients();
-                        this.suppliers = {
-                            name: "",
-                            dni: "",
-                            email: "",
-                            phone: "",
-                        };
-                    })
-                    .catch(() => {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Oops...",
-                            text: "No se ha podido registrar el usuario",
-                        });
-                    });
+
+                await axios.post("/api/suppliers/save", this.supplier);
+                Swal.fire({
+                    title: "Exitoso",
+                    text: "Proveedor registrado correctamente",
+                    icon: "success",
+                    confirmButtonText: "Aceptar",
+                });
+                this.supplier = {
+                    name: "",
+                    dni: "",
+                    email: "",
+                    phone: "",
+                };
+                await this.fetchSuppliers();
             } catch (err) {
                 this.errors = {};
-                err.inner.forEach((error) => {
-                    this.errors[error.path] = error.message;
-                });
+                if (err.inner) {
+                    err.inner.forEach((error) => {
+                        this.errors[error.path] = error.message;
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "No se ha podido registrar el proveedor",
+                    });
+                }
             }
         },
     },
@@ -403,8 +420,28 @@ export default {
 </script>
 
 <style>
+.modal-x {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+.modal-y {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 50%;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
 
-/* ESTILOS INDEPENDIENTES PARA ESTE COMPONENTE */
 .content-table {
     overflow-x: auto;
     width: 100%;

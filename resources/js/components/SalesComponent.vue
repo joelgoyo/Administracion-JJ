@@ -226,6 +226,7 @@ export default {
             },
         };
     },
+
     computed: {
         filteredBills() {
             return this.bills.filter((bill) => {
@@ -257,6 +258,7 @@ export default {
             return Math.ceil(this.filteredBills.length / this.pageSize);
         },
     },
+    
     watch: {
         filters: {
             deep: true,

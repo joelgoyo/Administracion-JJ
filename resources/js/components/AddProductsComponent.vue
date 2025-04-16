@@ -179,7 +179,7 @@
                     </thead>
                     <tbody>
                         <tr
-                            v-for="(product, index) in filteredProducts"
+                            v-for="(product, index) in paginatedProducts"
                             :key="product.id"
                         >
                             <th scope="row">{{ index + 1 }}</th>
@@ -232,6 +232,27 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <span class="mr-2"
+                    >Página {{ currentPage }} de {{ totalPages }}</span
+                >
+                <div>
+                    <button
+                        class="btn btn-sm btn-primary me-2 mr-2"
+                        :disabled="currentPage === 1"
+                        @click="currentPage--"
+                    >
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button
+                        class="btn btn-sm btn-primary ms-2 mr-2"
+                        :disabled="currentPage === totalPages"
+                        @click="currentPage++"
+                    >
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -385,6 +406,8 @@ const validationSchema = yup.object({
 export default {
     data() {
         return {
+            currentPage: 1,
+            pageSize: 10,
             form: {
                 code: "",
                 name: "",
@@ -400,36 +423,47 @@ export default {
             products: [],
             suppliers: [],
             errors: {},
-            editModal: { show: false, client: {} },
+            editModal: { show: false, products: {} },
             filters: {
                 code: "",
                 name: "",
             },
         };
     },
-    components: {},
-
-    computed: {
-        filteredProducts() {
-            const filtered = this.products.filter((product) => {
-                const codeMatch =
-                    !this.filters.code ||
-                    product.code.toString().includes(this.filters.code);
-                const nameMatch =
-                    !this.filters.name ||
-                    product.name
-                        .toLowerCase()
-                        .includes(this.filters.name.toLowerCase()); // Asegúrate de que solo comparas el nombre de la empresa.
-                return codeMatch && nameMatch;
-            });
-            return filtered.slice();
-        },
-    },
-
     mounted() {
         this.fechSuppliers();
         this.fetchProducts();
         this.fechCountProducts();
+    },
+    computed: {
+        filteredProducts() {
+            return this.products.filter((product) => {
+                const codeMatch = product.code
+                    ?.toString()
+                    .toLowerCase()
+                    .includes(this.filters.code.toLowerCase());
+                const nameMatch = product.name
+                    ?.toLowerCase()
+                    .includes(this.filters.name.toLowerCase());
+                return codeMatch && nameMatch;
+            });
+        },
+        paginatedProducts() {
+            const start = (this.currentPage - 1) * this.pageSize;
+            const end = start + this.pageSize;
+            return this.filteredProducts.slice(start, end);
+        },
+        totalPages() {
+            return Math.ceil(this.filteredProducts.length / this.pageSize);
+        },
+    },
+    watch: {
+        filters: {
+            deep: true,
+            handler() {
+                this.currentPage = 1;
+            },
+        },
     },
     methods: {
         formatDate(dateString) {
@@ -437,12 +471,10 @@ export default {
             const date = new Date(dateString);
             return date.toLocaleDateString();
         },
-
         openEditModal(products) {
             this.editModal.products = { ...products };
             this.editModal.show = true;
         },
-
         closeEditModal() {
             this.editModal.show = false;
         },
@@ -488,10 +520,9 @@ export default {
                 .get("/api/products/count")
                 .then((response) => {
                     this.countProducts = response.data;
-                    console.log(this.countProducts);
                 })
                 .catch((error) => {
-                    console.log("Error fetching suppliers:", error);
+                    console.log("Error fetching count:", error);
                 });
         },
 
@@ -519,7 +550,7 @@ export default {
                 if (result.isConfirmed) {
                     axios
                         .delete(`/api/products/delete/${id}`)
-                        .then((response) => {
+                        .then(() => {
                             Swal.fire({
                                 title: "Eliminado correctamente",
                                 icon: "success",
@@ -556,10 +587,10 @@ export default {
                     return;
                 }
 
-                const NameResponse = await axios.get(
+                const nameResponse = await axios.get(
                     `/api/products/check-name/${this.form.name}`
                 );
-                if (NameResponse.data.exists) {
+                if (nameResponse.data.exists) {
                     this.errors.name =
                         "Este nombre de producto ya esta registrado.";
                     return;
@@ -602,6 +633,7 @@ export default {
                 });
             }
         },
+
     },
 };
 </script>

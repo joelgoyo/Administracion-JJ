@@ -1,12 +1,9 @@
 <template>
-    <!-- HEADER -->
     <div class="container-content">
         <div class="content-title">
             <h2>Agregar nuevo cliente</h2>
             <p>Registrar nuevo cliente</p>
         </div>
-
-        <!-- CLIENTES Y REGISTROS DE CLIENTES -->
 
         <div class="data-clients">
             <div class="inputs-content">
@@ -34,7 +31,6 @@
                                 {{ errors.last_name }}
                             </p>
                         </div>
-
                         <div class="input">
                             <input
                                 type="text"
@@ -83,8 +79,7 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-floppy-disk"></i> GUARDAR NUEVO
-                        CLIENTE
+                        <i class="fa-solid fa-floppy-disk"></i> GUARDAR NUEVO CLIENTE
                     </button>
                 </form>
             </div>
@@ -116,6 +111,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="content-table">
                 <table class="table mt-3 table-add-product">
                     <thead>
@@ -131,17 +127,14 @@
                     </thead>
                     <tbody>
                         <tr
-                            v-for="(client, index) in filteredClients"
-                            :key="index.id"
+                            v-for="(client, index) in paginatedClients"
+                            :key="client.id"
                         >
                             <td>
-                                <strong> {{ index + 1 }} </strong>
+                                <strong>{{ (currentPage - 1) * pageSize + index + 1 }}</strong>
                             </td>
                             <td>
-                                <strong
-                                    >{{ client.name }}
-                                    {{ client.last_name }}</strong
-                                >
+                                <strong>{{ client.name }} {{ client.last_name }}</strong>
                             </td>
                             <td>
                                 <div class="text-dark">
@@ -172,105 +165,99 @@
                         </tr>
                     </tbody>
                 </table>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li
-                            class="page-item"
-                            :class="{ disabled: currentPage === 1 }"
-                        >
-                            <a
-                                class="page-link"
-                                href="#"
-                                @click.prevent="changePage(currentPage - 1)"
-                                ><i class="fa-solid fa-angles-left"></i
-                            ></a>
-                        </li>
-                        <li
-                            class="page-item"
-                            :class="{ disabled: currentPage === totalPages }"
-                        >
-                            <a
-                                class="page-link"
-                                href="#"
-                                @click.prevent="changePage(currentPage + 1)"
-                                ><i class="fa-solid fa-angles-right"></i
-                            ></a>
-                        </li>
-                    </ul>
-                </nav>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <span class="mr-2">Página {{ currentPage }} de {{ totalPages }}</span>
+                <div>
+                    <button
+                        class="btn btn-sm btn-primary me-2 mr-2"
+                        :disabled="currentPage === 1"
+                        @click="currentPage--"
+                    >
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button
+                        class="btn btn-sm btn-primary ms-2 mr-2"
+                        :disabled="currentPage === totalPages"
+                        @click="currentPage++"
+                    >
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
         <div v-else>
             <p>Cargando datos...</p>
         </div>
-    </div>
 
-    <div v-if="editModal.show" class="modal-x">
-        <div class="modal-y">
-            <div class="content-title">
-                <h2>Editar datos del cliente</h2>
-                <p>Editar</p>
+        <div v-if="editModal.show" class="modal-x">
+            <div class="modal-y">
+                <div class="content-title">
+                    <h2>Editar datos del cliente</h2>
+                    <p>Editar</p>
+                </div>
+
+                <form action="" @submit.prevent="updateClient">
+                    <div class="inputs">
+                        <input
+                            type="text"
+                            v-model="editModal.client.name"
+                            placeholder="Nombre"
+                            class="form-control mb-2"
+                        />
+                        <input
+                            type="text"
+                            v-model="editModal.client.last_name"
+                            placeholder="Apellido"
+                            class="form-control mb-2"
+                        />
+                    </div>
+                    <div class="inputs">
+                        <input
+                            type="text"
+                            v-model="editModal.client.address"
+                            placeholder="Dirección"
+                            class="form-control mb-2"
+                        />
+                        <input
+                            type="number"
+                            v-model="editModal.client.dni"
+                            placeholder="RIF/C.I"
+                            class="form-control mb-2"
+                        />
+                    </div>
+                    <div class="inputs">
+                        <input
+                            type="text"
+                            v-model="editModal.client.email"
+                            placeholder="Correo electronico"
+                            class="form-control mb-2"
+                        />
+                        <input
+                            type="text"
+                            v-model="editModal.client.phone"
+                            placeholder="Numero de telefono"
+                            class="form-control mb-2"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary mr-2">
+                        Actualizar
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-danger"
+                        @click="closeEditModal"
+                    >
+                        Cancelar
+                    </button>
+                </form>
             </div>
-
-            <form action="" @submit.prevent="updateClient">
-                <div class="inputs">
-                    <input
-                        type="text"
-                        v-model="editModal.client.name"
-                        placeholder="Nombre"
-                        class="form-control mb-2"
-                    />
-                    <input
-                        type="text"
-                        v-model="editModal.client.last_name"
-                        placeholder="Apellido"
-                        class="form-control mb-2"
-                    />
-                </div>
-                <div class="inputs">
-                    <input
-                        type="text"
-                        v-model="editModal.client.address"
-                        placeholder="Dirección"
-                        class="form-control mb-2"
-                    />
-                    <input
-                        type="number"
-                        v-model="editModal.client.dni"
-                        placeholder="RIF/C.I"
-                        class="form-control mb-2"
-                    />
-                </div>
-                <div class="inputs">
-                    <input
-                        type="text"
-                        v-model="editModal.client.email"
-                        placeholder="Correo electronico"
-                        class="form-control mb-2"
-                    />
-                    <input
-                        type="text"
-                        v-model="editModal.client.phone"
-                        placeholder="Numero de telefono"
-                        class="form-control mb-2"
-                    />
-                </div>
-                <button type="submit" class="btn btn-primary mr-2">
-                    Actualizar
-                </button>
-                <button
-                    type="button"
-                    class="btn btn-danger"
-                    @click="closeEditModal"
-                >
-                    Cancelar
-                </button>
-            </form>
         </div>
     </div>
 </template>
+
 <script>
-import LoadingComponent from "./LoadingComponent.vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import * as yup from "yup";
@@ -286,12 +273,13 @@ const validationSchema = yup.object({
         .required("Correo electrónico es requerido."),
     phone: yup.string().required("Número de teléfono es requerido."),
 });
+
 export default {
     data() {
         return {
-            fechaFormateada: "",
-            isLoading: true,
-            data: null,
+            currentPage: 1,
+            pageSize: 10,
+            isLoading: false,
             clients: {
                 name: "",
                 last_name: "",
@@ -307,95 +295,92 @@ export default {
                 email: "",
             },
             editModal: { show: false, client: {} },
-            form: {
-                name: "",
-                email: "",
-                password: "",
-            },
             errors: {},
-            currentPage: 1,
-            perPage: 10,
-            totalClients: 0,
         };
     },
-    components: {
-        LoadingComponent,
-    },
-
     mounted() {
-        this.formatearFechaHora();
-        setInterval(() => {
-            this.formatearFechaHora();
-        }, 1000);
-
-        setTimeout(() => {
-            this.fetchClients();
-        }, 2000);
+        this.fetchClients();
     },
     computed: {
         filteredClients() {
-            const filtered = this.clientList.filter((client) => {
-                const dniMatch =
-                    !this.filters.dni ||
-                    client.dni.toString().includes(this.filters.dni);
-                const nameMatch =
-                    !this.filters.name ||
-                    `${client.name} ${client.last_name}`
-                        .toLowerCase()
-                        .includes(this.filters.name.toLowerCase());
-                const emailMatch =
-                    !this.filters.email ||
-                    client.email
-                        .toLowerCase()
-                        .includes(this.filters.email.toLowerCase());
+            return this.clientList.filter((client) => {
+                const dniMatch = client.dni
+                    ?.toString()
+                    .toLowerCase()
+                    .includes(this.filters.dni.toLowerCase());
+                const nameMatch = `${client.name} ${client.last_name}`
+                    ?.toLowerCase()
+                    .includes(this.filters.name.toLowerCase());
+                const emailMatch = client.email
+                    ?.toLowerCase()
+                    .includes(this.filters.email.toLowerCase());
                 return dniMatch && nameMatch && emailMatch;
             });
-
-            const startIndex = (this.currentPage - 1) * this.perPage;
-            const endIndex = startIndex + this.perPage;
-            return filtered.slice(startIndex, endIndex);
+        },
+        paginatedClients() {
+            const start = (this.currentPage - 1) * this.pageSize;
+            const end = start + this.pageSize;
+            return this.filteredClients.slice(start, end);
         },
         totalPages() {
-            return Math.ceil(this.totalClients / this.perPage);
+            return Math.ceil(this.filteredClients.length / this.pageSize);
         },
     },
     watch: {
-        currentPage(newVal, oldVal) {
-            if (newVal !== oldVal) {
-                this.fetchClients();
-            }
+        filters: {
+            deep: true,
+            handler() {
+                this.currentPage = 1;
+            },
+        },
+        currentPage() {
+            if (this.currentPage < 1) this.currentPage = 1;
+            if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
         },
     },
     methods: {
+        async fetchClients() {
+            this.isLoading = true;
+            try {
+                const response = await axios.get("/api/clients/list");
+                this.clientList = response.data.clients;
+            } catch (error) {
+                console.error("Error fetching clients:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "No se pudieron cargar los clientes.",
+                });
+            } finally {
+                this.isLoading = false;
+            }
+        },
+        
         openEditModal(client) {
             this.editModal.client = { ...client };
             this.editModal.show = true;
         },
+
         closeEditModal() {
             this.editModal.show = false;
         },
-        updateClient() {
-            axios
-                .put(
+
+        async updateClient() {
+            try {
+                await axios.put(
                     `/api/clients/update/${this.editModal.client.id}`,
                     this.editModal.client
-                )
-                .then(() => {
-                    Swal.fire(
-                        "Cliente actualizado correctamente",
-                        "",
-                        "success"
-                    );
-                    this.closeEditModal();
-                    this.fetchClients();
-                })
-                .catch(() => {
-                    Swal.fire(
-                        "Error al actualizar el cliente ya estos datos estan en uso",
-                        "",
-                        "error"
-                    );
-                });
+                );
+                Swal.fire("Cliente actualizado correctamente", "", "success");
+                this.closeEditModal();
+                await this.fetchClients();
+            } catch (error) {
+                Swal.fire(
+                    "Error al actualizar el cliente ya estos datos estan en uso",
+                    "",
+                    "error"
+                );
+            }
         },
 
         deleteClient(id) {
@@ -411,7 +396,7 @@ export default {
                 if (result.isConfirmed) {
                     axios
                         .delete(`/api/clients/delete/${id}`)
-                        .then((response) => {
+                        .then(() => {
                             Swal.fire({
                                 title: "Eliminado correctamente",
                                 icon: "success",
@@ -431,112 +416,65 @@ export default {
             });
         },
 
-        async fetchClients() {
-            this.isLoading = true;
-            try {
-                const response = await axios.post(
-                    `/api/clients/list-table?page=${this.currentPage}&perPage=${this.perPage}`
-                );
-                this.clientList = response.data.clients.data;
-                this.totalClients = response.data.clients.total;
-            } catch (error) {
-                console.error("Error fetching clients:", error);
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "No se pudieron cargar los clientes.",
-                });
-            } finally {
-                this.isLoading = false;
-            }
-        },
-        formatearFechaHora() {
-            const ahora = new Date();
-            const dia = ahora.getDate().toString().padStart(2, "0");
-            const mes = (ahora.getMonth() + 1).toString().padStart(2, "0"); // Los meses comienzan desde 0
-            const anio = ahora.getFullYear();
-            const horas = ahora.getHours().toString().padStart(2, "0");
-            const minutos = ahora.getMinutes().toString().padStart(2, "0");
-            const segundos = ahora.getSeconds().toString().padStart(2, "0");
-            this.fechaFormateada = `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
-        },
-        async changePage(page) {
-            if (page >= 1 && page <= this.totalPages) {
-                this.currentPage = page;
-                await this.fetchClients();
-            }
-        },
-
-        pages() {
-            const pages = [];
-            for (let i = 1; i <= this.totalPages; i++) {
-                pages.push(i);
-            }
-            return pages;
-        },
         async handleSubmit() {
             try {
                 await validationSchema.validate(this.clients, {
                     abortEarly: false,
                 });
-                this.errors = {}; // Limpiar errores
+                this.errors = {};
 
-                // Verificar si el correo electrónico ya existe
                 const emailResponse = await axios.get(
                     `/api/clients/check-email/${this.clients.email}`
                 );
                 if (emailResponse.data.exists) {
                     this.errors.email =
                         "Este correo electrónico ya está registrado.";
-                    return; // Detener el registro si el correo ya existe
+                    return;
                 }
 
-                // Verificar si el DNI ya existe
                 const dniResponse = await axios.get(
                     `/api/clients/check-dni/${this.clients.dni}`
                 );
                 if (dniResponse.data.exists) {
                     this.errors.dni = "Este RIF/C.I ya está registrado.";
-                    return; // Detener el registro si el DNI ya existe
+                    return;
                 }
 
-                // Si el correo y el DNI no existen, proceder con el registro
-                axios
-                    .post("/api/clients/save", this.clients)
-                    .then(() => {
-                        Swal.fire({
-                            title: "Exitoso",
-                            text: "Cliente registrado correctamente",
-                            icon: "success",
-                            confirmButtonText: "Aceptar",
-                        });
-                        this.fetchClients();
-                        this.clients = {
-                            name: "",
-                            last_name: "",
-                            address: "",
-                            dni: "",
-                            email: "",
-                            phone: "",
-                        };
-                    })
-                    .catch(() => {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Oops...",
-                            text: "No se ha podido registrar el usuario",
-                        });
-                    });
+                await axios.post("/api/clients/save", this.clients);
+                Swal.fire({
+                    title: "Exitoso",
+                    text: "Cliente registrado correctamente",
+                    icon: "success",
+                    confirmButtonText: "Aceptar",
+                });
+                this.clients = {
+                    name: "",
+                    last_name: "",
+                    address: "",
+                    dni: "",
+                    email: "",
+                    phone: "",
+                };
+                await this.fetchClients();
             } catch (err) {
                 this.errors = {};
-                err.inner.forEach((error) => {
-                    this.errors[error.path] = error.message;
-                });
+                if (err.inner) {
+                    err.inner.forEach((error) => {
+                        this.errors[error.path] = error.message;
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "No se ha podido registrar el usuario",
+                    });
+                }
             }
         },
     },
 };
 </script>
+
 <style>
 .modal-x {
     position: fixed;
@@ -560,7 +498,6 @@ export default {
     transition: all 0.3s ease;
 }
 
-/* ESTILOS INDEPENDIENTES PARA ESTE COMPONENTE */
 .content-table {
     overflow-x: auto;
     width: 100%;
