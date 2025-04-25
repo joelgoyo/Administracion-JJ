@@ -32,6 +32,14 @@ class ClientController extends Controller
         ]);
     }
 
+    public function count(){
+        $client = Client::count();
+        return response()->json([
+            'status' => 200,
+            'clients' => $client,
+        ]);
+    }
+
     public function listTable(Request $request){
         $perPage = $request->input('perPage', 10);
         $clients = Client::orderBy('id', 'desc')->paginate($perPage);

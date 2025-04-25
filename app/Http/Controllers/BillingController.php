@@ -57,6 +57,14 @@ class BillingController extends Controller {
         ]);
     }
 
+    public function count(){
+        $billing = Bill::count();
+        return response()->json([
+            'status' => 200,
+            'billing' => $billing,
+        ]);
+    }
+
     public function save(Request $request){
         $billing = new Bill();
         $billing->client_id = $request->client_id;

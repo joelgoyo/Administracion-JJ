@@ -1,4 +1,5 @@
 <template>
+    <LoadingComponent v-model="isLoading" />
     <div class="container-content">
         <div class="content-title">
             <h2>Estadísticas de ventas</h2>
@@ -161,6 +162,7 @@ import {
 import { Line } from "vue-chartjs";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import LoadingComponent from "./LoadingComponent.vue";
 
 ChartJS.register(
     Title,
@@ -173,7 +175,7 @@ ChartJS.register(
 );
 
 export default {
-    components: { Line, Datepicker },
+    components: { Line, Datepicker, LoadingComponent },
     data() {
         return {
             filterByWeek: null,
@@ -224,6 +226,7 @@ export default {
                     },
                 },
             },
+            isLoading: true,
         };
     },
 
@@ -269,6 +272,9 @@ export default {
     },
     mounted() {
         this.fetchBills();
+        setTimeout(() => {
+            this.isLoading = false;
+        }, 1000);
     },
 
     methods: {

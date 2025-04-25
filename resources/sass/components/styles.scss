@@ -85,6 +85,37 @@ h2 {
         font-size: 28px;
     }
 }
+.loader-container {
+    padding: 20px;
+    width: 80% !important;
+    height: 100vh !important;
+    margin-left: 20%;
+    background-color: #000000eb !important;
+    z-index: 1 !important; 
+    @media screen and (max-width: 1269px) {
+        width: 76%;
+        margin-left: 25%;
+    }
+    @media screen and (max-width: 1026px) {
+        width: 73%;
+        margin-left: 27%;
+    }
+
+    @media screen and (max-width: 942px) {
+        width: 72%;
+        margin-left: 28%;
+    }
+    @media screen and (max-width: 906px) {
+        width: 71%;
+        margin-left: 29%;
+    }
+    @media screen and (max-width: 904px) {
+        width: 100%;
+        margin-left: 0%;
+        margin-top: 72px;
+        padding: 20px 16px;
+    }
+}
 .container-content {
     padding: 20px;
     width: 80%;
@@ -287,7 +318,7 @@ h2 {
     }
 }
 
-// MODAL EDIT 
+// MODAL EDIT
 .modal-x {
     position: fixed;
     top: 0;
@@ -308,8 +339,10 @@ h2 {
     width: 50%;
     border-radius: 20px;
     transition: all 0.3s ease;
+    height: 95vh;
+    overflow-y: auto;
 }
 
-.fa-wand-magic-sparkles{
+.fa-wand-magic-sparkles {
     font-size: 12px;
 }

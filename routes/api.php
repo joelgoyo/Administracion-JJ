@@ -32,6 +32,7 @@ Route::prefix('clients')->group(function (){
     Route::get('/check-dni/{dni}', [ClientController::class, 'checkDni']);
     Route::post('/list-table', [ClientController::class, 'listTable']);
     Route::get('/details', [ClientController::class, 'details']);
+    Route::get('/count', [ClientController::class, 'count']);
 });
 
 //PROVEEDORES
@@ -65,6 +66,7 @@ Route::prefix('billing')->group(function (){
     Route::post('/updateStock', [BillingController::class, 'updateStock']);
     Route::post('/billingProducts', [BillingController::class, 'index']);
     Route::get('/getClientsWithBillsAndProducts', [BillingController::class, 'getClientsWithBillsAndProducts']);
+    Route::get('/count', [BillingController::class, 'count']);
 });
 
 //GASTOS 

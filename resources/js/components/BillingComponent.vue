@@ -1,4 +1,6 @@
 <template>
+    <LoadingComponent v-model="isLoading" />
+
     <div class="container-content">
         <div
             class="content-title d-flex justify-content-between align-items-center"
@@ -355,13 +357,36 @@
     <div v-if="showProductModal" class="modal-x">
         <div class="modal-y modal-products">
             <h2 class="mb-3">Lista de Productos</h2>
-            <input
-                type="text"
-                placeholder="Codigo del producto"
-                class="form-control mb-3"
-                v-model="productFilter"
-            />
+            <div class="inputs">
+                <input
+                    type="text"
+                    placeholder="Nombre del producto"
+                    class="form-control mb-3"
+                    v-model="productNameFilter"
+                />
+                <input
+                    type="text"
+                    placeholder="Codigo del producto"
+                    class="form-control mb-3"
+                    v-model="productFilter"
+                />
+            </div>
+
             <div class="table-container">
+                <div class="d-flex justify-content-end">
+                    <button
+                        @click="showProductModal = false"
+                        class="btn btn-danger mr-2"
+                    >
+                        Cerrar
+                    </button>
+                    <button
+                        class="btn btn-primary"
+                        @click="addSelectedProductsToInvoice"
+                    >
+                        Agregar los productos a la factura
+                    </button>
+                </div>
                 <div class="content-table">
                     <table class="table mt-3">
                         <thead>
@@ -382,17 +407,19 @@
                             >
                                 <td>
                                     <div class="form-check">
-                                        <input
-                                            class="form-check-input"
-                                            type="checkbox"
-                                            value=""
-                                            :id="'product-' + product.id"
-                                            v-model="product.selected"
-                                        />
-                                        <label
-                                            class="form-check-label"
-                                            :for="'product-' + product.id"
-                                        ></label>
+                                        <div class="pretty-checkbox">
+                                            <label class="checkbox-container">
+                                                <input
+                                                    type="checkbox"
+                                                    value=""
+                                                    :id="
+                                                        'product-' + product.id
+                                                    "
+                                                    v-model="product.selected"
+                                                />
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </td>
                                 <td>
@@ -427,19 +454,6 @@
             </div>
             <ul v-if="products && products.length > 0"></ul>
             <p v-else>No hay productos disponibles.</p>
-
-            <button
-                @click="showProductModal = false"
-                class="btn btn-danger mr-2"
-            >
-                Cerrar
-            </button>
-            <button
-                class="btn btn-primary"
-                @click="addSelectedProductsToInvoice"
-            >
-                Agregar los productos a la factura
-            </button>
         </div>
     </div>
 </template>
@@ -469,6 +483,7 @@ export default {
             products: [],
             showProductModal: false,
             productFilter: "",
+            productNameFilter: "",
             selectedProducts: [],
             dolarBcv: { price: 0 },
             dolarParalelo: "",
@@ -510,6 +525,10 @@ export default {
             });
         this.clientsDate();
         this.productsList();
+
+        setTimeout(() => {
+            this.isLoading = false;
+        }, 1000);
     },
 
     computed: {
@@ -520,7 +539,14 @@ export default {
                         .toLowerCase()
                         .includes(this.productFilter.toLowerCase())
                 );
-            } else {
+            } if (this.productNameFilter) {
+                return this.products.filter((product) =>
+                    product.name
+                        .toLowerCase()
+                        .includes(this.productNameFilter.toLowerCase())
+                );
+            }
+             else {
                 return this.products;
             }
         },
@@ -1151,6 +1177,62 @@ export default {
 }
 </style>
 <style>
+.checkbox-container {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    position: relative;
+    padding-left: 30px;
+    user-select: none;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkmark {
+    position: absolute;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #eee;
+    border-radius: 4px;
+    border: 2px solid #ccc;
+    transition: all 0.2s ease-in-out;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    background-color: #f0f0f0;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: #4caf50;
+    border-color: #4caf50;
+}
+
+.checkmark::after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark::after {
+    display: block;
+}
+
+.checkbox-container .checkmark::after {
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
 .input-order {
     width: 100%;
     background: #e9ecef;

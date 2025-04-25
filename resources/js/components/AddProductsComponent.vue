@@ -1,4 +1,6 @@
 <template>
+    <LoadingComponent v-model="isLoading" />
+
     <div class="container-content">
         <div class="content-title">
             <h2>Inventario</h2>
@@ -388,6 +390,7 @@
 import * as yup from "yup";
 import axios from "axios";
 import Swal from "sweetalert2";
+import LoadingComponent from "./LoadingComponent.vue";
 
 const validationSchema = yup.object({
     code: yup.string().required("El codigo es requerido."),
@@ -428,12 +431,17 @@ export default {
                 code: "",
                 name: "",
             },
+            isLoading: true,
         };
     },
+    components: { LoadingComponent },
     mounted() {
         this.fechSuppliers();
         this.fetchProducts();
         this.fechCountProducts();
+        setTimeout(() => {
+            this.isLoading = false;
+        }, 1000);
     },
     computed: {
         filteredProducts() {
