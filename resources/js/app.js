@@ -19,6 +19,8 @@ import LoadingComponent from "./components/LoadingComponent.vue";
 import allUsersView from "./components/views/allUsers/allUsersView.vue";
 import UserView from "./components/views/allUsers/userView.vue";
 import disableComponent from "./components/error/disableComponent.vue";
+import EarningView from "./components/views/Earnings/EarningView.vue";
+
 const user = window.user;
 // Definir las rutas
 const routes = [
@@ -29,6 +31,17 @@ const routes = [
     {
         path: "/supplier-registration",
         component: SupplierRegistrationComponent,
+        beforeEnter: (to, from, next) => {
+            if (window.user && window.user.id === 2) {
+                next("/disable");
+            } else {
+                next();
+            }
+        },
+    },
+    {
+        path: "/earnings",
+        component: EarningView,
         beforeEnter: (to, from, next) => {
             if (window.user && window.user.id === 2) {
                 next("/disable");
@@ -119,6 +132,7 @@ app.component("sales-component", SalesComponent);
 app.component("all-users-view", allUsersView);
 app.component("users-view", UserView);
 app.component("disable-component", disableComponent);
+app.component("earning-view", EarningView);
 
 // Usar el enrutador en la aplicación Vue
 app.use(router);

@@ -30,9 +30,9 @@ class Bill extends Model
         return $this->belongsTo(Client::class);
     }
     
-    public function productInvoice()
+    public function productInvoices()
     {
-        return $this->hasMany(ProductInvoice::class);
+        return $this->hasMany(ProductInvoice::class, 'bill_id');
     }
 
     public function products()

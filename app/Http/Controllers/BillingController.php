@@ -10,45 +10,45 @@ use App\Models\ProductInvoice;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
-
 class BillingController extends Controller {
     public function index(Request $request){
-    $billId = $request->query('bill_id');
+        $billId = $request->query('bill_id');
 
-    if (!$billId) {
-        $billProducts = ProductInvoice::with(['bill', 'product'])->get();
-        return response()->json([
-            'ProductBilling' => $billProducts
-        ]);
-    }
+        if (!$billId) {
+            $billProducts = ProductInvoice::with(['bill', 'product'])->get();
+            return response()->json([
+                'ProductBilling' => $billProducts
+            ]);
+        }
 
-    $billProducts = ProductInvoice::with(['product'])
-        ->where('bill_id', $billId)
-        ->get();
+        $billProducts = ProductInvoice::with(['product'])
+            ->where('bill_id', $billId)
+            ->get();
 
-    if ($billProducts->isEmpty()) {
+        if ($billProducts->isEmpty()) {
+            return response()->json([
+                'bill_id' => $billId,
+                'products' => []
+            ], 404);
+        }
+
+        // Aquí mapeamos los datos deseados
+        $products = $billProducts->map(function ($bp) {
+            return [
+                'id' => $bp->product->id,
+                'code' => $bp->product->code,
+                'name' => $bp->product->name,
+                'description' => $bp->product->description,
+                'price_unit' => $bp->product->priceUnit,
+            ];
+        });
+
         return response()->json([
             'bill_id' => $billId,
-            'products' => []
-        ], 404);
+            'products' => $products
+        ]); 
     }
 
-    // Aquí mapeamos los datos deseados
-    $products = $billProducts->map(function ($bp) {
-        return [
-            'id' => $bp->product->id,
-            'code' => $bp->product->code,
-            'name' => $bp->product->name,
-            'description' => $bp->product->description,
-            'price_unit' => $bp->product->priceUnit,
-        ];
-    });
-
-    return response()->json([
-        'bill_id' => $billId,
-        'products' => $products
-    ]); 
-}
     public function list(){     
         $billing = Bill::with('client')->get();
         return response()->json([
@@ -168,5 +168,41 @@ class BillingController extends Controller {
             ], 200);
         });
     }
-}
 
+    public function getClientsWithBillsAndProducts()
+    {
+        // Cargar todos los clientes con sus facturas y los productos de cada factura
+        $clients = Client::with(['bills.productInvoices.product'])->get();
+
+        // Transformar los datos para la respuesta JSON
+        $response = $clients->map(function ($client) {
+            return [
+                'client_id' => $client->id,
+                'client_name' => $client->name,
+                'client_last_name' => $client->last_name,
+                'bills' => $client->bills->map(function ($bill) {
+                    return [
+                        'bill_id' => $bill->id,
+                        'created_at' => $bill->created_at,
+                        'amount' => $bill->amount,
+                        'amount_bs' => $bill->amount_bs,
+                        'products' => $bill->productInvoices->map(function ($productInvoice) {
+                            return [
+                                'product_id' => $productInvoice->product->id,
+                                'product_name' => $productInvoice->product->name,
+                                'product_code' => $productInvoice->product->code,
+                                'unit_price' => $productInvoice->product->priceUnit,
+                                'priceSupplier' => $productInvoice->product->priceSupplier,
+                            ];
+                        })->toArray(),
+                    ];
+                })->toArray(),
+            ];
+        })->toArray();
+
+        return response()->json([
+            'status' => 200,
+            'clients' => $response
+        ]);
+    }
+}

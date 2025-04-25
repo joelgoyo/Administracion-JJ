@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\ExpensesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +64,14 @@ Route::prefix('billing')->group(function (){
     Route::delete('/delete/{id}', [BillingController::class, 'delete']);
     Route::post('/updateStock', [BillingController::class, 'updateStock']);
     Route::post('/billingProducts', [BillingController::class, 'index']);
+    Route::get('/getClientsWithBillsAndProducts', [BillingController::class, 'getClientsWithBillsAndProducts']);
+});
+
+//GASTOS 
+Route::prefix('expenses')->group(function (){
+    Route::post('/save', [ExpensesController::class, 'save']);
+    Route::get('/list', [ExpensesController::class, 'list']);
+    Route::delete('/delete/{id}', [ExpensesController::class, 'delete']);
 });
 
 

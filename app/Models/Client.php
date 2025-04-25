@@ -17,6 +17,11 @@ class Client extends Model
         'dni',
         'address',
     ];
+
+    public function bills()
+    {
+        return $this->hasMany(Bill::class, 'client_id');
+    }
 }
 
 

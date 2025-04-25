@@ -72,15 +72,12 @@
                             </div>
                         </div>
                     </router-link>
-
                     <div class="link" @click="arrowToggle">
                         <div
                             class="menu-item d-flex justify-content-between align-items-center"
                         >
                             <div class="d-flex align-items-center">
-                                <i
-                                    class="icon-text fa-solid fa-hand-holding-dollar"
-                                ></i>
+                                <i class="icon-text fa-solid fa-file-lines"></i>
                                 <div class="text">Registros</div>
                             </div>
                             <i
@@ -102,7 +99,7 @@
                                     class="menu-item d-flex align-items-center"
                                 >
                                     <i class="icon-text fa-solid fa-users"></i>
-                                    <div class="text">Registro de cliente</div>
+                                    <div class="text">Registro de clientes</div>
                                 </div>
                             </router-link>
                             <router-link
@@ -121,11 +118,22 @@
                             </router-link>
                         </div>
                     </div>
-
+                    <router-link to="/expenses" class="link" v-if="user.id == 1">
+                        <div class="menu-item d-flex align-items-center">
+                            <i class="icon-text fa-solid fa-hand-holding-dollar"></i>
+                            <div class="text">Egresos</div>
+                        </div>
+                    </router-link>
                     <router-link to="/all-users" class="link" v-if="user.id == 1">
                         <div class="menu-item d-flex align-items-center">
                             <i class="icon-text fa-solid fa-user"></i>
                             <div class="text">Todos los usuarios</div>
+                        </div>
+                    </router-link>
+                    <router-link to="/earnings" class="link" v-if="user.id == 1">
+                        <div class="menu-item d-flex align-items-center">
+                            <i class="icon-text fa-solid fa-money-bill-1-wave"></i>
+                            <div class="text">Ganancias</div>
                         </div>
                     </router-link>
                 </div>

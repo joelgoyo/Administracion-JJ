@@ -63,6 +63,12 @@ Route::group(["middleware" => "auth"], function () {
     Route::get('/user-view/{id}', function () {
         return view('welcome');
     });
+    Route::get('/earnings', function () {
+        return view('welcome');
+    });
+    Route::get('/disable', function () {
+        return view('welcome');
+    });
 });
 
 
