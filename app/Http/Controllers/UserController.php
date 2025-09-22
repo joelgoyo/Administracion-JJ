@@ -8,13 +8,11 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     //
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::get();
-
         return response()->json([
             'message' => 'success',
-            'data' => $users
+            'data' => $request->user() // Devuelve los datos del usuario autenticado
         ]);
     }
 }

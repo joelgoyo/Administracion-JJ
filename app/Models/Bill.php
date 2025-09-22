@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Products;
 
 class Bill extends Model
 {
@@ -11,6 +12,7 @@ class Bill extends Model
 
     protected $fillable = [
         'client_id',
+        'order',
         'PlaceIssue',
         'date',
         'typeDelivery',
@@ -19,10 +21,23 @@ class Bill extends Model
         'deliveryNote',
         'deliveryDate',
         'status',
+        'amount',
+        'amount_bs',
     ];
 
     public function client()
     {
         return $this->belongsTo(Client::class);
     }
+    
+    public function productInvoices()
+    {
+        return $this->hasMany(ProductInvoice::class, 'bill_id');
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(products::class, 'product_invoices', 'bill_id', 'product_id')
+                ->withTimestamps();
+ }
 }

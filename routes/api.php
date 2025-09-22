@@ -1,8 +1,13 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\SuppliersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\BillingController;
+use App\Http\Controllers\ExpensesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +20,62 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'index']);
+
+//CLIENTES 
+Route::prefix('clients')->group(function (){
+    Route::post('/save', [ClientController::class, 'save']);
+    Route::get('/list', [ClientController::class, 'list']);
+    Route::delete('/delete/{id}', [ClientController::class, 'delete']);
+    Route::put('/update/{id}', [ClientController::class, 'update']);
+    Route::get('/check-email/{email}', [ClientController::class, 'checkEmail']);
+    Route::get('/check-dni/{dni}', [ClientController::class, 'checkDni']);
+    Route::post('/list-table', [ClientController::class, 'listTable']);
+    Route::get('/details', [ClientController::class, 'details']);
+    Route::get('/count', [ClientController::class, 'count']);
 });
+
+//PROVEEDORES
+Route::prefix('suppliers')->group(function (){
+    Route::post('/save', [SuppliersController::class, 'save']);
+    Route::get('/list', [SuppliersController::class, 'list']);
+    Route::get('/check-email/{email}', [SuppliersController::class, 'checkEmail']);
+    Route::get('/check-name/{name}', [SuppliersController::class, 'checkName']);
+    Route::delete('/delete/{id}', [SuppliersController::class, 'delete']);
+    Route::put('/update/{id}', [SuppliersController::class, 'update']);
+});
+
+//PRODUCTOS
+Route::prefix('products')->group(function (){
+    Route::post('/save', [ProductsController::class, 'save']);
+    Route::get('/list', [ProductsController::class, 'list']);
+    Route::get('/check-code/{code}', [ProductsController::class, 'checkCode']);
+    Route::get('/check-name/{name}', [ProductsController::class, 'checkName']);
+    Route::delete('/delete/{id}', [ProductsController::class, 'delete']);
+    Route::put('/update/{id}', [ProductsController::class, 'update']);
+    Route::get('/count', [ProductsController::class, 'productsCount']);
+});
+
+//FACTURACION 
+Route::prefix('billing')->group(function (){
+    Route::post('/save', [BillingController::class, 'save']);
+    Route::post('/save-billProducts', [BillingController::class, 'saveBillingProducts']);
+    Route::get('/list', [BillingController::class, 'list']);
+    Route::get('/listInvoice', [BillingController::class, 'listInvoice']);
+    Route::delete('/delete/{id}', [BillingController::class, 'delete']);
+    Route::post('/updateStock', [BillingController::class, 'updateStock']);
+    Route::post('/billingProducts', [BillingController::class, 'index']);
+    Route::get('/getClientsWithBillsAndProducts', [BillingController::class, 'getClientsWithBillsAndProducts']);
+    Route::get('/count', [BillingController::class, 'count']);
+});
+
+//GASTOS 
+Route::prefix('expenses')->group(function (){
+    Route::post('/save', [ExpensesController::class, 'save']);
+    Route::get('/list', [ExpensesController::class, 'list']);
+    Route::delete('/delete/{id}', [ExpensesController::class, 'delete']);
+});
+
+
 
 Route::get('users', [UserController::class, 'index']);

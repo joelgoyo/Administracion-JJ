@@ -10,15 +10,8 @@ class Expenses extends Model
     use HasFactory;
 
     protected $fillable = [
-        'accountingCode',
-        'account',
-        'category',
-        'subCategory',
-        'employee_id',
-        'service',
-        'description',
-        'type',
-        'balance',
-        'date',
+        'description_expenses',
+        'payment_amount',
+        'payment_type',
     ];
 }

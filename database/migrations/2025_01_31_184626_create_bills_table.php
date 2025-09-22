@@ -15,13 +15,17 @@ return new class extends Migration
             $table->id();
             $table->foreignId('client_id')->constrained()->onDelete('cascade')->nullable();
             $table->string('PlaceIssue')->nullable();
-            $table->date('date');
-            $table->enum('typeDelivery', ['home', 'p2p', 'other']);
-            $table->enum('typePayment', ['cash', 'creditCard', 'debitCard', 'transfer', 'payMovil']);
+            $table->string('order')->nullable();
+            $table->string('bill_order')->nullable();
+            $table->date('date')>nullable();
+            $table->string('typeDelivery');
+            $table->string('typePayment');
             $table->string('bank')->nullable();
             $table->string('deliveryNote')->nullable();
             $table->date('deliveryDate')->nullable();
-            $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending')->nullable();
+            $table->string('amount')->nullable();
+            $table->string('amount_bs')->nullable();
             $table->timestamps();
         });
     }
